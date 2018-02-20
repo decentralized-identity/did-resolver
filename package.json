@@ -1,0 +1,52 @@
+{
+  "name": "did-resolver",
+  "version": "1.0.0",
+  "description": "Resolve standatd DID documents",
+  "main": "lib/resolver.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uport-project/did-resolver.git"
+  },
+  "files": [
+    "dist",
+    "lib",
+    "src"
+  ],
+  "author": "Pelle Braendgaard <pelle.braendgaard@consensys.net>",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest",
+    "build:es5": "./node_modules/.bin/babel src -d lib",
+    "build": "yarn build:es5 && yarn test"
+  },
+  "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-jest": "^22.4.0",
+    "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
+    "babel-preset-env": "^1.6.0",
+    "jest": "^22.4.0",
+    "regenerator-runtime": "^0.11.1",
+    "sinon": "^4.0.1",
+    "standard": "^11.0.0"
+  },
+  "dependencies": {},
+  "standard": {
+    "ignore": [
+      "lib/**"
+    ],
+    "globals": [
+      "it",
+      "describe",
+      "expect",
+      "jest",
+      "beforeAll",
+      "beforeEach",
+      "afterAll",
+      "afterEach"
+    ]
+  }
+}
