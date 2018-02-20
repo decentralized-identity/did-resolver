@@ -1,7 +1,7 @@
 {
   "name": "did-resolver",
   "version": "1.0.0",
-  "description": "Resolve standatd DID documents",
+  "description": "Resolve DID documents",
   "main": "lib/resolver.js",
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
     "collectCoverage": true
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-jest": "^22.4.0",
     "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
