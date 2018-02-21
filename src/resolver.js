@@ -17,13 +17,18 @@ export function parse (did) {
   throw new Error(`Invalid DID ${did}`)
 }
 
-export async function resolve (did) {
-  const parsed = parse(did)
-  const resolver = REGISTRY[parsed.method]
-  if (resolver) {
-    return resolver(did, parsed)
-  }
-  throw new Error(`Unsupported DID method: '${parsed.method}'`)
+export function resolve (did) {
+  return new Promise((resolve, reject) => {
+    const parsed = parse(did)
+    const resolver = REGISTRY[parsed.method]
+    if (resolver) {
+      return resolver(did, parsed).then(resolve)
+    }
+    reject(new Error(`Unsupported DID method: '${parsed.method}'`))
+  })
 }
 
 export default resolve
+resolve.registerMethod = registerMethod
+resolve.parse = parse
+module.exports = resolve

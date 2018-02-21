@@ -21,7 +21,7 @@ describe('resolver', () => {
   })
 
   describe('resolve', () => {
-    registerMethod('example', (did, parsed) => ({
+    registerMethod('example', async (did, parsed) => ({
       '@context': 'https://w3id.org/did/v1',
       id: did
     }))
