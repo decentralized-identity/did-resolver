@@ -22,7 +22,7 @@ export function resolve (did) {
     const parsed = parse(did)
     const resolver = REGISTRY[parsed.method]
     if (resolver) {
-      return resolver(did, parsed).then(resolve)
+      return resolver(did, parsed).then(resolve, reject)
     }
     reject(new Error(`Unsupported DID method: '${parsed.method}'`))
   })

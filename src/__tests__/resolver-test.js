@@ -29,6 +29,7 @@ describe('resolver', () => {
     it('fails on unhandled methods', async () => {
       await expect(resolve('did:borg:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX')).rejects.toEqual(new Error('Unsupported DID method: \'borg\''))
     })
+    
     it('fails on parse error', async () => {
       await expect(resolve('did:borg:')).rejects.toEqual(new Error('Invalid DID did:borg:'))
     })

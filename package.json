@@ -1,6 +1,6 @@
 {
   "name": "did-resolver",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Resolve DID documents",
   "main": "lib/resolver.js",
   "repository": {
