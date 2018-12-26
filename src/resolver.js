@@ -7,7 +7,7 @@ export function registerMethod (method, resolver) {
 
 export function parse (did) {
   if (!did || did === '') throw new Error('Missing DID')
-  const sections = did.match(/^did:([a-zA-Z0-9]+):([[a-zA-Z0-9.-]+)(\/[^#]*)?(#.*)?$/)
+  const sections = did.match(/^did:([a-zA-Z0-9_]+):([[a-zA-Z0-9_.-]+)(\/[^#]*)?(#.*)?$/)
   if (sections) {
     const parts = {did: sections[0], method: sections[1], id: sections[2]}
     if (sections[3]) parts.path = sections[3]
