@@ -1,9 +1,9 @@
 {
   "name": "did-resolver",
-  "version": "0.0.5",
+  "version": "0.0.6-alpha1",
   "description": "Resolve DID documents",
   "main": "lib/resolver.js",
-  "types": "lib/register.d.ts",
+  "types": "lib/resolver.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/uport-project/did-resolver.git"

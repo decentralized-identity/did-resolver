@@ -1,4 +1,4 @@
-interface DIDDocument {
+export interface DIDDocument {
   '@context': 'https://w3id.org/did/v1'
   id: string
   publicKey?: PublicKey[]
@@ -18,7 +18,7 @@ interface Authentication {
   publicKey: string
 }
 
-interface ParsedDID {
+export interface ParsedDID {
   did: string
   method: string
   id: string
@@ -26,7 +26,7 @@ interface ParsedDID {
   fragment?: string
 }
 
-interface DIDResolver {
+export interface DIDResolver {
   (did: string, parsed: ParsedDID) : Promise<null|DIDDocument>
 }
 
