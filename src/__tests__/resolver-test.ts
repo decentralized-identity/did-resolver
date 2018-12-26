@@ -11,7 +11,6 @@ describe('resolver', () => {
     })
 
     it('fails if non compliant', () => {
-      expect(() => parse()).toThrowError(`Missing DID`)
       expect(() => parse('')).toThrowError(`Missing DID`)
       expect(() => parse('did:')).toThrowError(`Invalid DID did:`)
       expect(() => parse('did:uport')).toThrowError(`Invalid DID did:uport`)
