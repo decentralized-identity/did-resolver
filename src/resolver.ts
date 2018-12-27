@@ -51,7 +51,7 @@ let globalObject : {
 
 var REGISTRY : ResolverRegistry
 
-if (window) {
+if (typeof window === 'object') {
   globalObject = window
 } else if (typeof global === 'object') {
   globalObject = global
