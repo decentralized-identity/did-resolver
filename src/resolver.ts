@@ -1,20 +1,20 @@
 export interface DIDDocument {
   '@context': 'https://w3id.org/did/v1'
   id: string
-  publicKey?: PublicKey[]
+  publicKey: PublicKey[]
   authentication?: Authentication[]
   uportProfile?: any
   service?: ServiceEndpoint[]
 }
 
-interface ServiceEndpoint {
+export interface ServiceEndpoint {
   id: string
   type: string
   serviceEndpoint: string
   description?: string
 }
 
-interface PublicKey {
+export interface PublicKey {
   id: string
   type: string
   owner: string
@@ -25,7 +25,7 @@ interface PublicKey {
   publicKeyPem?: string
 }
 
-interface Authentication {
+export interface Authentication {
   type: string
   publicKey: string
 }
