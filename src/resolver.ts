@@ -3,6 +3,15 @@ export interface DIDDocument {
   id: string
   publicKey?: PublicKey[]
   authentication?: Authentication[]
+  uportProfile?: any
+  service?: ServiceEndpoint[]
+}
+
+interface ServiceEndpoint {
+  id: string
+  type: string
+  serviceEndpoint: string
+  description?: string
 }
 
 interface PublicKey {
@@ -11,6 +20,9 @@ interface PublicKey {
   owner: string
   ethereumAddress?: string
   publicKeyBase64?: string
+  publicKeyBase58?: string
+  publicKeyHex?: string
+  publicKeyPem?: string
 }
 
 interface Authentication {
