@@ -1,6 +1,6 @@
 {
   "name": "did-resolver",
-  "version": "0.0.6-alpha1",
+  "version": "0.0.6-alpha2",
   "description": "Resolve DID documents",
   "main": "lib/resolver.js",
   "types": "lib/resolver.d.ts",
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@types/jest": "^23.3.10",
+    "@types/node": "^10.12.18",
     "jest": "^23.6.0",
     "prettier": "^1.15.3",
     "regenerator-runtime": "^0.12.1",

@@ -33,8 +33,27 @@ export interface DIDResolver {
 interface ResolverRegistry {
   [index: string]: DIDResolver
 }
+let globalObject : {
+  DID_REGISTRY: ResolverRegistry
+}
 
-const REGISTRY : ResolverRegistry = {}
+var REGISTRY : ResolverRegistry
+
+if (window) {
+  globalObject = window
+} else if (typeof global === 'object') {
+  globalObject = global
+} else {
+  globalObject = {
+    DID_REGISTRY: {}
+  }
+}
+
+if (globalObject.DID_REGISTRY) {
+  REGISTRY = globalObject.DID_REGISTRY
+} else {
+  REGISTRY = globalObject.DID_REGISTRY = {}
+}
 
 export function registerMethod (method: string, resolver: DIDResolver) {
   REGISTRY[method] = resolver
