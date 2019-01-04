@@ -19,7 +19,7 @@
     "build": "tsc",
     "test": "jest",
     "dev": "tsc --watch",
-    "format": "prettier"
+    "format": "prettier --write src/**/*"
   },
   "devDependencies": {
     "@types/jest": "^23.3.10",
