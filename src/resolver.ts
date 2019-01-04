@@ -72,7 +72,7 @@ export function registerMethod (method: string, resolver: DIDResolver) {
 }
 
 export function parse (did: string) : ParsedDID {
-  if (!did || did === '') throw new Error('Missing DID')
+  if (did === '') throw new Error('Missing DID')
   const sections = did.match(/^did:([a-zA-Z0-9_]+):([[a-zA-Z0-9_.-]+)(\/[^#]*)?(#.*)?$/)
   if (sections) {
     const parts : ParsedDID = {did: sections[0], method: sections[1], id: sections[2]}
