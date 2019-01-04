@@ -23,7 +23,12 @@ describe('resolver', () => {
   describe('resolve', () => {
     registerMethod('example', async (did, parsed) => ({
       '@context': 'https://w3id.org/did/v1',
-      id: did
+      id: did,
+      publicKey: [{
+        id: 'owner',
+        owner: '1234',
+        type: 'xyz',
+      }]
     }))
 
     it('fails on unhandled methods', async () => {
@@ -37,7 +42,12 @@ describe('resolver', () => {
     it('resolves did document', async () => {
       await expect(resolve('did:example:123456789')).resolves.toEqual({
         '@context': 'https://w3id.org/did/v1',
-        id: 'did:example:123456789'
+        id: 'did:example:123456789',
+        publicKey: [{
+          id: 'owner',
+          owner: '1234',
+          type: 'xyz',
+        }]
       })
     })
   })
