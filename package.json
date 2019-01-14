@@ -1,8 +1,9 @@
 {
   "name": "did-resolver",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Resolve DID documents",
   "main": "lib/resolver.js",
+  "types": "lib/resolver.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/uport-project/did-resolver.git"
@@ -15,42 +16,40 @@
   "author": "Pelle Braendgaard <pelle.braendgaard@consensys.net>",
   "license": "MIT",
   "scripts": {
+    "build": "tsc",
     "test": "jest",
-    "build:es5": "./node_modules/.bin/babel src -d lib",
-    "build": "yarn build:es5 && yarn test"
-  },
-  "jest": {
-    "coverageDirectory": "./coverage/",
-    "collectCoverage": true
+    "dev": "tsc --watch",
+    "format": "prettier --write src/**/*"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-jest": "^22.4.0",
-    "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.6.0",
-    "jest": "^22.4.0",
-    "regenerator-runtime": "^0.11.1",
-    "sinon": "^4.0.1",
-    "standard": "^11.0.0"
+    "@types/jest": "^23.3.10",
+    "@types/node": "^10.12.18",
+    "jest": "^23.6.0",
+    "prettier": "^1.15.3",
+    "regenerator-runtime": "^0.12.1",
+    "ts-jest": "^23.10.5",
+    "tslint": "^5.12.0",
+    "tslint-config-prettier": "^1.17.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.2.2"
   },
-  "dependencies": {
-    "babel-runtime": "^6.26.0"
-  },
-  "standard": {
-    "ignore": [
-      "lib/**"
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json"
     ],
-    "globals": [
-      "it",
-      "describe",
-      "expect",
-      "jest",
-      "beforeAll",
-      "beforeEach",
-      "afterAll",
-      "afterEach"
+    "coverageDirectory": "./coverage/",
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}",
+      "!src/**/*.d.ts",
+      "!**/node_modules/**"
     ]
   }
 }
