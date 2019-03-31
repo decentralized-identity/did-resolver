@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import resolve, {parse, registerMethod} from '../resolver'
+import { parse, Resolver} from '../resolver'
 
 describe('resolver', () => {
   describe('parse()', () => {
@@ -35,26 +35,30 @@ describe('resolver', () => {
   })
 
   describe('resolve', () => {
-    registerMethod('example', async (did, parsed) => ({
-      '@context': 'https://w3id.org/did/v1',
-      id: did,
-      publicKey: [{
-        id: 'owner',
-        owner: '1234',
-        type: 'xyz',
-      }]
-    }))
+    let resolver : Resolver
+    beforeAll(() => {
+      resolver = new Resolver({example: async (did, parsed) => ({
+        '@context': 'https://w3id.org/did/v1',
+        id: did,
+        publicKey: [{
+          id: 'owner',
+          owner: '1234',
+          type: 'xyz',
+        }]
+      })})
+    })
+
 
     it('fails on unhandled methods', async () => {
-      await expect(resolve('did:borg:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX')).rejects.toEqual(new Error('Unsupported DID method: \'borg\''))
+      await expect(resolver.resolve('did:borg:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX')).rejects.toEqual(new Error('Unsupported DID method: \'borg\''))
     })
     
     it('fails on parse error', async () => {
-      await expect(resolve('did:borg:')).rejects.toEqual(new Error('Invalid DID did:borg:'))
+      await expect(resolver.resolve('did:borg:')).rejects.toEqual(new Error('Invalid DID did:borg:'))
     })
 
     it('resolves did document', async () => {
-      await expect(resolve('did:example:123456789')).resolves.toEqual({
+      await expect(resolver.resolve('did:example:123456789')).resolves.toEqual({
         '@context': 'https://w3id.org/did/v1',
         id: 'did:example:123456789',
         publicKey: [{
