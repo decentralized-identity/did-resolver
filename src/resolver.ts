@@ -53,7 +53,7 @@ export interface ParsedDID {
 }
 
 export interface DIDResolver {
-  (did: string, parsed: ParsedDID) : Promise<null|DIDDocument>
+  (did: string, parsed: ParsedDID): Promise<null | DIDDocument>
 }
 
 interface ResolverRegistry {
@@ -74,11 +74,11 @@ export function parse(did: string): ParsedDID {
 
 export class Resolver {
   private registry: ResolverRegistry
-  constructor (registry : ResolverRegistry = {}) {
+  constructor(registry: ResolverRegistry = {}) {
     this.registry = registry
   }
-  
-  register (method: string, resolver: DIDResolver) {
+
+  register(method: string, resolver: DIDResolver) {
     this.registry[method] = resolver
   }
 

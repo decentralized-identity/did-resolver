@@ -17,11 +17,11 @@ import { parse, Resolver} from '../resolver'
 describe('resolver', () => {
   describe('parse()', () => {
     it('returns parts', () => {
-      expect(parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX')).toEqual({method: 'uport', id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX', did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX'})
-      expect(parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path')).toEqual({method: 'uport', id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX', did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path', path: '/some/path'})
-      expect(parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX#fragment=123')).toEqual({method: 'uport', id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX', did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX#fragment=123', fragment: 'fragment=123'})
-      expect(parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123')).toEqual({method: 'uport', id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX', did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123', path: '/some/path', fragment: 'fragment=123'})
-      expect(parse('did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI')).toEqual({method: 'nacl', id: 'Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI', did: 'did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI'})
+      expect(parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX')).toEqual({ method: 'uport', id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX', did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX' })
+      expect(parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path')).toEqual({ method: 'uport', id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX', did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path', path: '/some/path' })
+      expect(parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX#fragment=123')).toEqual({ method: 'uport', id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX', did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX#fragment=123', fragment: 'fragment=123' })
+      expect(parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123')).toEqual({ method: 'uport', id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX', did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123', path: '/some/path', fragment: 'fragment=123' })
+      expect(parse('did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI')).toEqual({ method: 'nacl', id: 'Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI', did: 'did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI' })
     })
 
     it('fails if non compliant', () => {
@@ -35,24 +35,26 @@ describe('resolver', () => {
   })
 
   describe('resolve', () => {
-    let resolver : Resolver
+    let resolver: Resolver
     beforeAll(() => {
-      resolver = new Resolver({example: async (did, parsed) => ({
-        '@context': 'https://w3id.org/did/v1',
-        id: did,
-        publicKey: [{
-          id: 'owner',
-          owner: '1234',
-          type: 'xyz',
-        }]
-      })})
+      resolver = new Resolver({
+        example: async (did, parsed) => ({
+          '@context': 'https://w3id.org/did/v1',
+          id: did,
+          publicKey: [{
+            id: 'owner',
+            owner: '1234',
+            type: 'xyz',
+          }]
+        })
+      })
     })
 
 
     it('fails on unhandled methods', async () => {
       await expect(resolver.resolve('did:borg:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX')).rejects.toEqual(new Error('Unsupported DID method: \'borg\''))
     })
-    
+
     it('fails on parse error', async () => {
       await expect(resolver.resolve('did:borg:')).rejects.toEqual(new Error('Invalid DID did:borg:'))
     })
