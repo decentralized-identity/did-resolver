@@ -2,8 +2,6 @@
   "name": "did-resolver",
   "version": "0.1.0-alpha.0",
   "description": "Resolve DID documents",
-  "main": "lib/resolver.js",
-  "types": "lib/resolver.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/uport-project/did-resolver.git"
@@ -16,12 +14,33 @@
   "author": "Pelle Braendgaard <pelle.braendgaard@consensys.net>",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc",
-    "test": "jest",
-    "dev": "tsc --watch",
+    "build": "./node_modules/.bin/pack build",
+    "test": "./node_modules/.bin/jest",
     "format": "prettier --write src/**/*"
   },
+  "@pika/pack": {
+    "pipeline": [
+      [
+        "@pika/plugin-ts-standard-pkg",
+        {
+          "exclude": [
+            "__tests__/**/*"
+          ]
+        }
+      ],
+      [
+        "@pika/plugin-build-node"
+      ],
+      [
+        "@pika/plugin-build-web"
+      ]
+    ]
+  },
   "devDependencies": {
+    "@pika/pack": "^0.3.6",
+    "@pika/plugin-build-node": "^0.3.14",
+    "@pika/plugin-build-web": "^0.3.14",
+    "@pika/plugin-ts-standard-pkg": "^0.3.14",
     "@types/jest": "^24.0.11",
     "@types/node": "^10.12.18",
     "jest": "^24.5.0",

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Resolver, { parse } from '../resolver'
+import Resolver, { parse } from '../index'
 
 describe('resolver', () => {
   describe('parse()', () => {
