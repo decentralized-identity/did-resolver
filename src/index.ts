@@ -78,13 +78,17 @@ export default class Resolver {
     this.registry = registry
   }
 
-  async resolve(did: string): Promise<DIDDocument | null> {
-    const parsed = parse(did)
-    const resolver = this.registry[parsed.method]
-    if (resolver) {
-      return await resolver(did, parsed, this)
+  resolve(did: string): Promise<DIDDocument | null> {
+    try {
+      const parsed = parse(did)
+      const resolver = this.registry[parsed.method]
+      if (resolver) {
+        return resolver(did, parsed, this)
+      }
+      return Promise.reject(new Error(`Unsupported DID method: '${parsed.method}'`))
+    } catch (error) {
+      return Promise.reject(error)
     }
-    throw new Error(`Unsupported DID method: '${parsed.method}'`)
   }
 }
 
