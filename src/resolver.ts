@@ -53,7 +53,7 @@ export interface ParsedDID {
 }
 
 export interface DIDResolver {
-  (did: string, parsed: ParsedDID): Promise<null | DIDDocument>
+  (did: string, parsed: ParsedDID, didResolver: Resolver): Promise<null | DIDDocument>
 }
 
 interface ResolverRegistry {
@@ -72,21 +72,17 @@ export function parse(did: string): ParsedDID {
   throw new Error(`Invalid DID ${did}`)
 }
 
-export class Resolver {
+export default class Resolver {
   private registry: ResolverRegistry
   constructor(registry: ResolverRegistry = {}) {
     this.registry = registry
-  }
-
-  register(method: string, resolver: DIDResolver) {
-    this.registry[method] = resolver
   }
 
   async resolve(did: string): Promise<DIDDocument | null> {
     const parsed = parse(did)
     const resolver = this.registry[parsed.method]
     if (resolver) {
-      return await resolver(did, parsed)
+      return await resolver(did, parsed, this)
     }
     throw new Error(`Unsupported DID method: '${parsed.method}'`)
   }
