@@ -19,7 +19,7 @@ You now no longer register your DID resolvers using the global `registerMethod()
 You are now required to preconfigure a resolver during instantiation:
 
 ```js
-import DIDResolver from 'did-resolver'
+import { DIDResolver } from 'did-resolver'
 import ethr from 'ethr-did-resolver'
 import web from 'web-did-resolver'
 import sov from 'sov-did-resolver'
@@ -65,7 +65,7 @@ export default async function myResolver (did, parsed, didResolver) {
 The method resolver should register this so that just requiring it will register the method:
 
 ```js
-import DIDResolver from 'did-resolver'
+import { DIDResolver } from 'did-resolver'
 import MyMethod from 'mymethod-did-resolver'
 
 const resolver = new DIDResolver({
