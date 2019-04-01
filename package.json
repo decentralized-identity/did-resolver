@@ -14,7 +14,7 @@
     "src"
   ],
   "author": "Pelle Braendgaard <pelle.braendgaard@consensys.net>",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "tsc",
     "test": "jest",
