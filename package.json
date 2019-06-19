@@ -1,6 +1,6 @@
 {
   "name": "did-resolver",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Resolve DID documents",
   "main": "lib/resolver.js",
   "types": "lib/resolver.d.ts",
@@ -14,7 +14,7 @@
     "src"
   ],
   "author": "Pelle Braendgaard <pelle.braendgaard@consensys.net>",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "scripts": {
     "build": "tsc",
     "test": "jest",

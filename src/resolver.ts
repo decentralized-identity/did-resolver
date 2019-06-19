@@ -1,3 +1,17 @@
+// Copyright 2018 ConsenSys AG
+
+// Licensed under the Apache License, Version 2.0(the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+// http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 export interface DIDDocument {
   '@context': 'https://w3id.org/did/v1'
   id: string
@@ -73,7 +87,7 @@ export function registerMethod (method: string, resolver: DIDResolver) {
 
 export function parse (did: string) : ParsedDID {
   if (did === '') throw new Error('Missing DID')
-  const sections = did.match(/^did:([a-zA-Z0-9_]+):([[a-zA-Z0-9_.-]+)(\/[^#]*)?(#.*)?$/)
+  const sections = did.match(/^did:([a-zA-Z0-9_]+):([:[a-zA-Z0-9_.-]+)(\/[^#]*)?(#.*)?$/)
   if (sections) {
     const parts : ParsedDID = {did: sections[0], method: sections[1], id: sections[2]}
     if (sections[3]) parts.path = sections[3]
