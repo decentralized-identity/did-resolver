@@ -62,7 +62,7 @@ interface ResolverRegistry {
 
 export function parse(did: string): ParsedDID {
   if (did === '') throw new Error('Missing DID')
-  const sections = did.match(/^did:([a-zA-Z0-9_]+):([[a-zA-Z0-9_.-]+)(\/[^#]*)?(#.*)?$/)
+  const sections = did.match(/^did:([a-zA-Z0-9_]+):([:[a-zA-Z0-9_.-]+)(\/[^#]*)?(#.*)?$/)
   if (sections) {
     const parts: ParsedDID = { did: sections[0], method: sections[1], id: sections[2] }
     if (sections[3]) parts.path = sections[3]
