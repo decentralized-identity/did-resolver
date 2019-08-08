@@ -41,7 +41,7 @@ describe('resolver', () => {
       expect(
         parse(
           'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123'
-        ),
+        )
       ).toEqual({
         method: 'uport',
         id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
@@ -68,7 +68,7 @@ describe('resolver', () => {
         `Invalid DID did:uport:1234_12313***`
       )
       expect(() => parse('2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX')).toThrowError(
-        `Invalid DID 2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX`,
+        `Invalid DID 2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX`
       )
     })
   })
@@ -111,8 +111,8 @@ describe('resolver', () => {
           {
             id: 'owner',
             owner: '1234',
-            type: 'xyz',
-          },
+            type: 'xyz'
+          }
         ]
       })
     })
