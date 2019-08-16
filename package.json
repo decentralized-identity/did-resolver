@@ -1,9 +1,12 @@
 {
   "name": "did-resolver",
-  "version": "0.0.7",
+  "version": "1.0.0",
   "description": "Resolve DID documents",
   "main": "lib/resolver.js",
   "types": "lib/resolver.d.ts",
+  "source": "src/resolver.ts",
+  "module": "lib/resolver.esm.js",
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/uport-project/did-resolver.git"
@@ -16,22 +19,24 @@
   "author": "Pelle Braendgaard <pelle.braendgaard@consensys.net>",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc",
-    "test": "jest",
-    "dev": "tsc --watch",
-    "format": "prettier --write src/**/*"
+    "build:js": "./node_modules/.bin/microbundle",
+    "test": "./node_modules/.bin/jest",
+    "format": "prettier --write src/**/*",
+    "build": "npm run format && npm test && npm run build:js",
+    "prepare": "npm run build"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.10",
-    "@types/node": "^10.12.18",
-    "jest": "^23.6.0",
-    "prettier": "^1.15.3",
-    "regenerator-runtime": "^0.12.1",
-    "ts-jest": "^23.10.5",
-    "tslint": "^5.12.0",
-    "tslint-config-prettier": "^1.17.0",
+    "@types/jest": "^24.0.17",
+    "@types/node": "^12.7.1",
+    "jest": "^24.8.0",
+    "microbundle": "^0.11.0",
+    "prettier": "^1.18.2",
+    "regenerator-runtime": "^0.13.3",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.2.2"
+    "typescript": "^3.5.3"
   },
   "jest": {
     "transform": {
