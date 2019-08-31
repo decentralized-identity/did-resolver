@@ -59,10 +59,28 @@ export interface ParsedDID {
   params?: Params
 }
 
-export type DIDResolver = (did: string, parsed: ParsedDID, didResolver: Resolver) => Promise<null | DIDDocument>
+export type DIDResolver = (did: string, parsed: ParsedDID, resolver: Resolver) => Promise<null | DIDDocument>
+export type WrappedResolver = () => Promise<null | DIDDocument>
+export type DIDCache = (parsed: ParsedDID, resolve: WrappedResolver) => Promise<null | DIDDocument>
 
 interface ResolverRegistry {
   [index: string]: DIDResolver
+}
+
+export function inMemoryCache() : DIDCache {
+  const cache: WeakMap<ParsedDID, DIDDocument|null> = new WeakMap()
+  return async (parsed, resolve) => {
+    if (parsed.params && parsed.params['no-cache'] === 'true') return await resolve()
+    const cached = cache.get(parsed)
+    if (cached !== undefined) return cached
+    const doc = await resolve()
+    cache.set(parsed, doc)
+    return doc
+  }
+}
+
+export function noCache(parsed: ParsedDID, resolve: WrappedResolver): Promise<null | DIDDocument> {
+  return resolve()
 }
 
 const ID_CHAR = '[a-zA-Z0-9_.-]'
@@ -98,16 +116,21 @@ export function parse(didUrl: string): ParsedDID {
 
 export class Resolver {
   private registry: ResolverRegistry
-  constructor(registry: ResolverRegistry = {}) {
+  private cache: DIDCache
+
+  constructor(registry: ResolverRegistry = {}, cache?: DIDCache|boolean|undefined) {
     this.registry = registry
+    this.cache = cache === true || cache === undefined
+      ? inMemoryCache()
+      : (cache === false ? noCache : cache)
   }
 
-  resolve(did: string): Promise<DIDDocument | null> {
+  resolve(didUrl: string): Promise<DIDDocument | null> {
     try {
-      const parsed = parse(did)
+      const parsed = parse(didUrl)
       const resolver = this.registry[parsed.method]
       if (resolver) {
-        return resolver(did, parsed, this)
+        return this.cache(parsed, () => resolver(parsed.did, parsed, this))
       }
       return Promise.reject(new Error(`Unsupported DID method: '${parsed.method}'`));
     } catch (error) {
