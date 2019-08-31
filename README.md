@@ -42,6 +42,42 @@ resolver.resolve('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragme
 const doc = await resolver.resolve('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123')
 ```
 
+## Caching
+
+Resolving DID Documents can be expensive. It is in most cases best to cache DID documents. By default caching is now enabled in the resolver.
+
+The built in cache uses a WeakMap, but does not have an automatic TTL, so entries don't expire. This is fine in most web, mobile and serverless contexts. If you run a long running process you may want to use an existing configurable caching system.
+
+Here is an example using `js-cache` which has not been tested.
+
+```js
+var cache = require('js-cache')
+const customCache : DIDCache = (parsed, resolve) => {
+  // DID spec requires to not cache if no-cache param is set
+  if (parsed.params && parsed.params['no-cache'] === 'true') return await resolve()
+  const cached = cache.get(parsed.didUrl)
+  if (cached !== undefined) return cached
+  const doc = await resolve()
+  cache.set(parsed, doc, 60000)
+  return doc
+}
+
+const resolver = new DIDResolver({
+  ethr,
+  web
+}, customCache)
+```
+
+The Cache can also be disabled by passing in a `false` value to the constructor:
+
+```js
+const resolver = new DIDResolver({
+  ethr,
+  web
+}, false)
+```
+
+
 ## Implementing a DID method
 
 Each DID method will have it's own methods for looking up an identifier on it's respective blockchain or other decentralized storage mechanism.
@@ -59,8 +95,6 @@ export default async function myResolver (did, parsed, didResolver) {
   return didDoc
 })
 ```
-
-
 
 The method resolver should register this so that just requiring it will register the method:
 
