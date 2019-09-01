@@ -59,9 +59,7 @@ export interface ParsedDID {
   params?: Params
 }
 
-export interface DIDResolver {
-  (did: string, parsed: ParsedDID, didResolver: Resolver): Promise<null | DIDDocument>
-}
+export type DIDResolver = (did: string, parsed: ParsedDID, didResolver: Resolver) => Promise<null | DIDDocument>
 
 interface ResolverRegistry {
   [index: string]: DIDResolver
@@ -85,7 +83,7 @@ export function parse(didUrl: string): ParsedDID {
     if (sections[4]) {
       const params = sections[4].slice(1).split(';')
       parts.params = {}
-      for (let p of params) {
+      for (const p of params) {
         const kv = p.split('=')
         parts.params[kv[0]] = kv[1]
       }
