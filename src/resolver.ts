@@ -79,7 +79,7 @@ export function parse(didUrl: string): ParsedDID {
   if (didUrl === '' || !didUrl) throw new Error('Missing DID')
   const sections = didUrl.match(DID_MATCHER)
   if (sections) {
-    const parts: ParsedDID = { did: `did:${sections[1]}:${sections[2]}`, method: sections[1], id: sections[2], didUrl}
+    const parts: ParsedDID = { did: `did:${sections[1]}:${sections[2]}`, method: sections[1], id: sections[2], didUrl }
     if (sections[4]) {
       const params = sections[4].slice(1).split(';')
       parts.params = {}
