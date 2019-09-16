@@ -19,12 +19,12 @@ You now no longer register your DID resolvers using the global `registerMethod()
 You are now required to preconfigure a resolver during instantiation:
 
 ```js
-import { DIDResolver } from 'did-resolver'
+import { Resolver } from 'did-resolver'
 import ethr from 'ethr-did-resolver'
 import web from 'web-did-resolver'
 import sov from 'sov-did-resolver'
 
-const resolver = new DIDResolver({
+const resolver = new Resolver({
   ethr,
   web,
   https: web // Override a did method type
