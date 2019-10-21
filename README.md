@@ -16,19 +16,33 @@ You now no longer register your DID resolvers using the global `registerMethod()
 
 ## Configure `Resolver` object
 
-You are now required to preconfigure a resolver during instantiation:
+You are now required to preconfigure a resolver during instantiation. The `Resolver` constructor expects a registry of methods mapped to a resolver function. For example: 
+```
+{ 
+  ethr: resolve,
+  web: resolve
+}
+```
 
+Each method resolver should expose a function called `getResolver` which will return an object containing one of these key/value pairs. Then you can flatten them into one object to pass into the `Resolver` constructor. 
 ```js
 import { Resolver } from 'did-resolver'
 import ethr from 'ethr-did-resolver'
 import web from 'web-did-resolver'
 import sov from 'sov-did-resolver'
 
+//returns an object of { methodName: resolveFunction}
+ethrResolver = ethr.getResolver()
+webResolver = web.getResolver()
+
+//If you are using multiple methods you need to flatten them into one object
 const resolver = new Resolver({
-  ethr,
-  web,
-  https: web // Override a did method type
+  ...ethrResolver,
+  ...webResolver,
 })
+
+//If you are using one method you can simply pass the result of getResolver( into the constructor
+const resolver = new Resolver(ethrResolver)
 ```
 
 ## Resolving a DID document
