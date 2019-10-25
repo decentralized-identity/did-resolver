@@ -60,30 +60,36 @@ const doc = await resolver.resolve('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkq
 
 Each DID method will have it's own methods for looking up an identifier on it's respective blockchain or other decentralized storage mechanism.
 
-A method implementer calls the `registerMethod('methodname', resolver)`. where `methodname` is the method identifier. The resolver is a function that receives a DID and a parsed version of the DID. It returns a ES6 Promise that looks up the DID document.
+A method implementer should export a `getResolver()` function. Which returns an object mapping the method name to a `resolve(did: string, parsed: ParsedDID)` function. e.g. `{ ethr: resolve }`. 
+
+the resolve function should accept a did string, and an object of type [ParsedDID](https://github.com/decentralized-identity/did-resolver/blob/develop/src/resolver.ts#L51)
 
 ```js
-export default async function myResolver (did, parsed, didResolver) {
-  console.log(parsed)
-  // {method: 'mymethod', id: 'abcdefg', did: 'did:mymethod:abcdefg/some/path#fragment=123', path: '/some/path', fragment: 'fragment=123'}
-  const didDoc = ...// lookup doc
-  // If you need to lookup another did as part of resolving this did document, the primary DIDResolver object is passed in as well
-  const parentDID = await didResolver.resolve(...)
-  //
-  return didDoc
-})
+export function getResolver() {
+  async function resolve(
+    did: string,
+    parsed: ParsedDID
+  ): Promise<DIDDocument | null> {
+    console.log(parsed)
+    // {method: 'mymethod', id: 'abcdefg', did: 'did:mymethod:abcdefg/some/path#fragment=123', path: '/some/path', fragment: 'fragment=123'}
+    const didDoc = ...// lookup doc
+    // If you need to lookup another did as part of resolving this did document, the primary DIDResolver object is passed in as well
+    const parentDID = await didResolver.resolve(...)
+    //
+    return didDoc
+  }
+
+  return { myMethod: resolve }
+}
 ```
 
-
-
-The method resolver should register this so that just requiring it will register the method:
+The MyMethod `getResolver()` result could then be passed into the DIDResolver constructor. Note that it should be flattened if used with other methods as well. 
 
 ```js
 import { DIDResolver } from 'did-resolver'
 import MyMethod from 'mymethod-did-resolver'
 
-const resolver = new DIDResolver({
-  mymethod: MyMethod
-})
+const myResolver = MyMethod.getResolver()
+const resolver = new DIDResolver(myResolver)
 ```
 
