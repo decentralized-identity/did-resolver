@@ -17,7 +17,7 @@ You now no longer register your DID resolvers using the global `registerMethod()
 ## Configure `Resolver` object
 
 You are now required to preconfigure a resolver during instantiation. The `Resolver` constructor expects a registry of methods mapped to a resolver function. For example: 
-```
+```js
 { 
   ethr: resolve,
   web: resolve
@@ -60,7 +60,7 @@ const doc = await resolver.resolve('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkq
 
 Each DID method will have it's own methods for looking up an identifier on it's respective blockchain or other decentralized storage mechanism.
 
-A method implementer should export a `getResolver()` function. Which returns an object mapping the method name to a `resolve(did: string, parsed: ParsedDID)` function. e.g. `{ ethr: resolve }`. 
+To avoid misconfiguration, method implementers should export a `getResolver()` function. Which returns an object mapping the method name to a `resolve(did: string, parsed: ParsedDID, didResolver: DIDResolver)` function. e.g. `{ ethr: resolve }`.
 
 the resolve function should accept a did string, and an object of type [ParsedDID](https://github.com/decentralized-identity/did-resolver/blob/develop/src/resolver.ts#L51)
 
@@ -68,7 +68,8 @@ the resolve function should accept a did string, and an object of type [ParsedDI
 export function getResolver() {
   async function resolve(
     did: string,
-    parsed: ParsedDID
+    parsed: ParsedDID,
+    didResolver: DIDResolver
   ): Promise<DIDDocument | null> {
     console.log(parsed)
     // {method: 'mymethod', id: 'abcdefg', did: 'did:mymethod:abcdefg/some/path#fragment=123', path: '/some/path', fragment: 'fragment=123'}
