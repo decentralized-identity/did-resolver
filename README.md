@@ -44,11 +44,21 @@ const doc = await resolver.resolve('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkq
 
 ## Caching
 
-Resolving DID Documents can be expensive. It is in most cases best to cache DID documents. By default caching is now enabled in the resolver.
+Resolving DID Documents can be expensive. It is in most cases best to cache DID documents. Caching has to be specifically enabled using the `cache` parameter
 
-The built in cache uses a WeakMap, but does not have an automatic TTL, so entries don't expire. This is fine in most web, mobile and serverless contexts. If you run a long running process you may want to use an existing configurable caching system.
+The built in cache uses a Map, but does not have an automatic TTL, so entries don't expire. This is fine in most web, mobile and serverless contexts. If you run a long running process you may want to use an existing configurable caching system.
+
+The built in Cache can be enabled by passing in a `true` value to the constructor:
+
+```js
+const resolver = new DIDResolver({
+  ethr,
+  web
+}, true)
+```
 
 Here is an example using `js-cache` which has not been tested.
+
 
 ```js
 var cache = require('js-cache')
@@ -67,16 +77,6 @@ const resolver = new DIDResolver({
   web
 }, customCache)
 ```
-
-The Cache can also be disabled by passing in a `false` value to the constructor:
-
-```js
-const resolver = new DIDResolver({
-  ethr,
-  web
-}, false)
-```
-
 
 ## Implementing a DID method
 

@@ -68,13 +68,13 @@ interface ResolverRegistry {
 }
 
 export function inMemoryCache() : DIDCache {
-  const cache: WeakMap<ParsedDID, DIDDocument|null> = new WeakMap()
+  const cache: Map<String, DIDDocument|null> = new Map()
   return async (parsed, resolve) => {
     if (parsed.params && parsed.params['no-cache'] === 'true') return await resolve()
-    const cached = cache.get(parsed)
+    const cached = cache.get(parsed.did)
     if (cached !== undefined) return cached
     const doc = await resolve()
-    cache.set(parsed, doc)
+    cache.set(parsed.did, doc)
     return doc
   }
 }
@@ -120,9 +120,9 @@ export class Resolver {
 
   constructor(registry: ResolverRegistry = {}, cache?: DIDCache|boolean|undefined) {
     this.registry = registry
-    this.cache = cache === true || cache === undefined
+    this.cache = cache === true
       ? inMemoryCache()
-      : (cache === false ? noCache : cache)
+      : cache || noCache    
   }
 
   resolve(didUrl: string): Promise<DIDDocument | null> {
