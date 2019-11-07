@@ -92,12 +92,19 @@ const PARAMS = `((${PARAM})*)`
 const PATH = `(\/[^#?]*)?`
 const QUERY = `([?][^#]*)?`
 const FRAGMENT = `(\#.*)?`
-const DID_MATCHER = new RegExp(`^did:${METHOD}:${METHOD_ID}${PARAMS}${PATH}${QUERY}${FRAGMENT}$`)
+const DID_MATCHER = new RegExp(
+  `^did:${METHOD}:${METHOD_ID}${PARAMS}${PATH}${QUERY}${FRAGMENT}$`
+)
 export function parse(didUrl: string): ParsedDID {
   if (didUrl === '' || !didUrl) throw new Error('Missing DID')
   const sections = didUrl.match(DID_MATCHER)
   if (sections) {
-    const parts: ParsedDID = { did: `did:${sections[1]}:${sections[2]}`, method: sections[1], id: sections[2], didUrl }
+    const parts: ParsedDID = {
+      did: `did:${sections[1]}:${sections[2]}`,
+      method: sections[1],
+      id: sections[2],
+      didUrl
+    }
     if (sections[4]) {
       const params = sections[4].slice(1).split(';')
       parts.params = {}
@@ -132,10 +139,11 @@ export class Resolver {
       if (resolver) {
         return this.cache(parsed, () => resolver(parsed.did, parsed, this))
       }
-      return Promise.reject(new Error(`Unsupported DID method: '${parsed.method}'`));
+      return Promise.reject(
+        new Error(`Unsupported DID method: '${parsed.method}'`)
+      )
     } catch (error) {
       return Promise.reject(error)
     }
   }
 }
-
