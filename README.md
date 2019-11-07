@@ -1,4 +1,8 @@
 # Javascript DID Resolver
+[![CircleCI](https://circleci.com/gh/decentralized-identity/did-resolver.svg?style=svg)](https://circleci.com/gh/decentralized-identity/did-resolver)
+[![codecov](https://codecov.io/gh/decentralized-identity/did-resolver/branch/master/graph/badge.svg)](https://codecov.io/gh/decentralized-identity/did-resolver)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6dc5e3f01b1148698b0378d771341253)](https://www.codacy.com/manual/uport-project/did-resolver?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=uport-project/did-resolver&amp;utm_campaign=Badge_Grade)
+
 
 This library is intended as a simple common interface for javascript applications to resolve DID documents from Decentralized Identifiers (DIDs).
 
