@@ -1,4 +1,8 @@
 # Javascript DID Resolver
+[![CircleCI](https://circleci.com/gh/decentralized-identity/did-resolver.svg?style=svg)](https://circleci.com/gh/decentralized-identity/did-resolver)
+[![codecov](https://codecov.io/gh/decentralized-identity/did-resolver/branch/master/graph/badge.svg)](https://codecov.io/gh/decentralized-identity/did-resolver)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6dc5e3f01b1148698b0378d771341253)](https://www.codacy.com/manual/uport-project/did-resolver?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=uport-project/did-resolver&amp;utm_campaign=Badge_Grade)
+
 
 This library is intended as a simple common interface for javascript applications to resolve DID documents from Decentralized Identifiers (DIDs).
 
@@ -54,6 +58,42 @@ resolver.resolve('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragme
 
 // You can also use ES7 async/await syntax
 const doc = await resolver.resolve('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123')
+```
+
+## Caching
+
+Resolving DID Documents can be expensive. It is in most cases best to cache DID documents. Caching has to be specifically enabled using the `cache` parameter
+
+The built in cache uses a Map, but does not have an automatic TTL, so entries don't expire. This is fine in most web, mobile and serverless contexts. If you run a long running process you may want to use an existing configurable caching system.
+
+The built in Cache can be enabled by passing in a `true` value to the constructor:
+
+```js
+const resolver = new DIDResolver({
+  ethr,
+  web
+}, true)
+```
+
+Here is an example using `js-cache` which has not been tested.
+
+
+```js
+var cache = require('js-cache')
+const customCache : DIDCache = (parsed, resolve) => {
+  // DID spec requires to not cache if no-cache param is set
+  if (parsed.params && parsed.params['no-cache'] === 'true') return await resolve()
+  const cached = cache.get(parsed.didUrl)
+  if (cached !== undefined) return cached
+  const doc = await resolve()
+  cache.set(parsed, doc, 60000)
+  return doc
+}
+
+const resolver = new DIDResolver({
+  ethr,
+  web
+}, customCache)
 ```
 
 ## Implementing a DID method
