@@ -59,10 +59,28 @@ export interface ParsedDID {
   params?: Params
 }
 
-export type DIDResolver = (did: string, parsed: ParsedDID, didResolver: Resolver) => Promise<null | DIDDocument>
+export type DIDResolver = (did: string, parsed: ParsedDID, resolver: Resolver) => Promise<null | DIDDocument>
+export type WrappedResolver = () => Promise<null | DIDDocument>
+export type DIDCache = (parsed: ParsedDID, resolve: WrappedResolver) => Promise<null | DIDDocument>
 
 interface ResolverRegistry {
   [index: string]: DIDResolver
+}
+
+export function inMemoryCache() : DIDCache {
+  const cache: Map<string, DIDDocument|null> = new Map()
+  return async (parsed, resolve) => {
+    if (parsed.params && parsed.params['no-cache'] === 'true') return await resolve()
+    const cached = cache.get(parsed.did)
+    if (cached !== undefined) return cached
+    const doc = await resolve()
+    cache.set(parsed.did, doc)
+    return doc
+  }
+}
+
+export function noCache(parsed: ParsedDID, resolve: WrappedResolver): Promise<null | DIDDocument> {
+  return resolve()
 }
 
 const ID_CHAR = '[a-zA-Z0-9_.-]'
@@ -74,12 +92,19 @@ const PARAMS = `((${PARAM})*)`
 const PATH = `(\/[^#?]*)?`
 const QUERY = `([?][^#]*)?`
 const FRAGMENT = `(\#.*)?`
-const DID_MATCHER = new RegExp(`^did:${METHOD}:${METHOD_ID}${PARAMS}${PATH}${QUERY}${FRAGMENT}$`)
+const DID_MATCHER = new RegExp(
+  `^did:${METHOD}:${METHOD_ID}${PARAMS}${PATH}${QUERY}${FRAGMENT}$`
+)
 export function parse(didUrl: string): ParsedDID {
   if (didUrl === '' || !didUrl) throw new Error('Missing DID')
   const sections = didUrl.match(DID_MATCHER)
   if (sections) {
-    const parts: ParsedDID = { did: `did:${sections[1]}:${sections[2]}`, method: sections[1], id: sections[2], didUrl }
+    const parts: ParsedDID = {
+      did: `did:${sections[1]}:${sections[2]}`,
+      method: sections[1],
+      id: sections[2],
+      didUrl
+    }
     if (sections[4]) {
       const params = sections[4].slice(1).split(';')
       parts.params = {}
@@ -98,21 +123,27 @@ export function parse(didUrl: string): ParsedDID {
 
 export class Resolver {
   private registry: ResolverRegistry
-  constructor(registry: ResolverRegistry = {}) {
+  private cache: DIDCache
+
+  constructor(registry: ResolverRegistry = {}, cache?: DIDCache|boolean|undefined) {
     this.registry = registry
+    this.cache = cache === true
+      ? inMemoryCache()
+      : cache || noCache    
   }
 
-  resolve(did: string): Promise<DIDDocument | null> {
+  resolve(didUrl: string): Promise<DIDDocument | null> {
     try {
-      const parsed = parse(did)
+      const parsed = parse(didUrl)
       const resolver = this.registry[parsed.method]
       if (resolver) {
-        return resolver(did, parsed, this)
+        return this.cache(parsed, () => resolver(parsed.did, parsed, this))
       }
-      return Promise.reject(new Error(`Unsupported DID method: '${parsed.method}'`));
+      return Promise.reject(
+        new Error(`Unsupported DID method: '${parsed.method}'`)
+      )
     } catch (error) {
       return Promise.reject(error)
     }
   }
 }
-
