@@ -2,6 +2,7 @@ node_modules
 lib
 .vscode/settings.json
 coverage
+.idea/
 
 *.log
 

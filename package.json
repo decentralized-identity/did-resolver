@@ -9,7 +9,7 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/uport-project/did-resolver.git"
+    "url": "git@github.com:decentralized-identity/did-resolver.git"
   },
   "files": [
     "dist",
