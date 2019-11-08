@@ -148,14 +148,14 @@ describe('resolver', () => {
     let mockmethod: any
     const mockReturn = Promise.resolve({
       '@context': 'https://w3id.org/did/v1',
-        id: 'did:mock:abcdef',
-        publicKey: [
-          {
-            id: 'owner',
-            owner: '1234',
-            type: 'xyz'
-          }
-        ]
+      id: 'did:mock:abcdef',
+      publicKey: [
+        {
+          id: 'owner',
+          owner: '1234',
+          type: 'xyz'
+        }
+      ]
     })
     beforeAll(() => {
       mockmethod = jest.fn().mockReturnValue(mockReturn)
@@ -208,7 +208,7 @@ describe('resolver', () => {
           resolver = new Resolver({
             mock: mockmethod
           })
-  
+
           await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
             '@context': 'https://w3id.org/did/v1',
             id: 'did:mock:abcdef',
@@ -231,7 +231,7 @@ describe('resolver', () => {
               }
             ]
           })
-          return expect(mockmethod).toBeCalledTimes(2)          
+          return expect(mockmethod).toBeCalledTimes(2)
         })
       })
     })
@@ -239,10 +239,13 @@ describe('resolver', () => {
     describe('cache=true', () => {
       it('should cache', async () => {
         mockmethod = jest.fn().mockReturnValue(mockReturn)
-        resolver = new Resolver({
-          mock: mockmethod
-        }, true)
-  
+        resolver = new Resolver(
+          {
+            mock: mockmethod
+          },
+          true
+        )
+
         await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
           '@context': 'https://w3id.org/did/v1',
           id: 'did:mock:abcdef',
@@ -265,15 +268,18 @@ describe('resolver', () => {
             }
           ]
         })
-        return expect(mockmethod).toBeCalledTimes(1)          
+        return expect(mockmethod).toBeCalledTimes(1)
       })
 
       it('should respect no-cache', async () => {
         mockmethod = jest.fn().mockReturnValue(mockReturn)
-        resolver = new Resolver({
-          mock: mockmethod
-        }, true)
-  
+        resolver = new Resolver(
+          {
+            mock: mockmethod
+          },
+          true
+        )
+
         await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
           '@context': 'https://w3id.org/did/v1',
           id: 'did:mock:abcdef',
@@ -285,7 +291,9 @@ describe('resolver', () => {
             }
           ]
         })
-        await expect(resolver.resolve('did:mock:abcdef;no-cache=true')).resolves.toEqual({
+        await expect(
+          resolver.resolve('did:mock:abcdef;no-cache=true')
+        ).resolves.toEqual({
           '@context': 'https://w3id.org/did/v1',
           id: 'did:mock:abcdef',
           publicKey: [
@@ -296,9 +304,8 @@ describe('resolver', () => {
             }
           ]
         })
-        return expect(mockmethod).toBeCalledTimes(2)          
+        return expect(mockmethod).toBeCalledTimes(2)
       })
-
     })
   })
 })
