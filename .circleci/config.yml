@@ -53,23 +53,6 @@ workflows:
               ignore:
                 - master
 
-  deploy-release-tag:
-    jobs:
-      - verify-unit-tests:
-          filters:
-            tags:
-              only: /^v?((\d+\.))?(\d+\.)(\d+)-(dev|alpha|beta).*/
-            branches:
-              ignore: /.*/
-      - deploy-to-npm:
-          requires:
-            - verify-unit-tests
-          filters:
-            tags:
-              only: /^v?((\d+\.))?(\d+\.)(\d+)-(dev|alpha|beta).*/
-            branches:
-              ignore: /.*/
-
 ###############################################################
 # Jobs
 ###############################################################
@@ -112,16 +95,3 @@ jobs:
             git config user.email "devops@uport.me"
             git config user.name "uport-automation-bot"
             npm run release
-
-  deploy-to-npm:
-    working_directory: ~/project
-    docker:
-        - image: circleci/node:10
-    steps:
-      - checkout:
-          path: ~/project
-      - attach_workspace:
-          at: ~/project
-      - run:
-          name: publish to npm
-          command: npm publish
