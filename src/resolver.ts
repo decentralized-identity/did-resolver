@@ -77,9 +77,9 @@ interface ResolverRegistry {
 export function inMemoryCache(): DIDCache {
   const cache: Map<string, DIDDocument | null> = new Map()
   return async (parsed, resolve) => {
-    if (parsed.params && parsed.params['no-cache'] === 'true') {
+    if (parsed.params && parsed.params['no-cache'] === 'true')
       return await resolve()
-    }
+
     const cached = cache.get(parsed.did)
     if (cached !== undefined) return cached
     const doc = await resolve()
