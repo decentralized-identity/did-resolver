@@ -109,7 +109,7 @@ export function getResolver() {
   async function resolve(
     did: string,
     parsed: ParsedDID,
-    didResolver: DIDResolver
+    didResolver: Resolver
   ): Promise<DIDDocument | null> {
     console.log(parsed)
     // {method: 'mymethod', id: 'abcdefg', did: 'did:mymethod:abcdefg/some/path#fragment=123', path: '/some/path', fragment: 'fragment=123'}
