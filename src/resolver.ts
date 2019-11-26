@@ -19,6 +19,9 @@ export interface DIDDocument {
   authentication?: Authentication[]
   uportProfile?: any
   service?: ServiceEndpoint[]
+  created?: string
+  updated?: string
+  proof?: LinkedDataProof
 }
 
 export interface ServiceEndpoint {
@@ -42,6 +45,14 @@ export interface PublicKey {
 export interface Authentication {
   type: string
   publicKey: string
+}
+
+export interface LinkedDataProof {
+  type: string
+  created: string
+  creator: string
+  nonce: string
+  signatureValue: string
 }
 
 export interface Params {
