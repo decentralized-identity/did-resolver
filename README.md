@@ -98,11 +98,11 @@ const resolver = new DIDResolver({
 
 ## Implementing a DID method
 
-Each DID method will have it's own methods for looking up an identifier on it's respective blockchain or other decentralized storage mechanism.
+Each DID method will have its own methods for looking up an identifier on its respective blockchain or other decentralized storage mechanism.
 
-To avoid misconfiguration, method implementers should export a `getResolver()` function. Which returns an object mapping the method name to a `resolve(did: string, parsed: ParsedDID, didResolver: DIDResolver)` function. e.g. `{ ethr: resolve }`.
+To avoid misconfiguration, method implementers should export a `getResolver()` function which returns an object mapping the method name to a `resolve(did: string, parsed: ParsedDID, didResolver: DIDResolver)` function. e.g. `{ ethr: resolve }`.
 
-the resolve function should accept a did string, and an object of type [ParsedDID](https://github.com/decentralized-identity/did-resolver/blob/develop/src/resolver.ts#L51)
+The resolve function should accept a did string, and an object of type [ParsedDID](https://github.com/decentralized-identity/did-resolver/blob/develop/src/resolver.ts#L51)
 
 ```js
 export function getResolver() {
