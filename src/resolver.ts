@@ -94,7 +94,9 @@ export function inMemoryCache(): DIDCache {
     const cached = cache.get(parsed.did)
     if (cached !== undefined) return cached
     const doc = await resolve()
-    cache.set(parsed.did, doc)
+    if (doc !== null) {
+      cache.set(parsed.did, doc)
+    }
     return doc
   }
 }
@@ -156,18 +158,19 @@ export class Resolver {
     this.cache = cache === true ? inMemoryCache() : cache || noCache
   }
 
-  resolve(didUrl: string): Promise<DIDDocument | null> {
-    try {
-      const parsed = parse(didUrl)
-      const resolver = this.registry[parsed.method]
-      if (resolver) {
-        return this.cache(parsed, () => resolver(parsed.did, parsed, this))
-      }
-      return Promise.reject(
-        new Error(`Unsupported DID method: '${parsed.method}'`)
+  async resolve(didUrl: string): Promise<DIDDocument> {
+    const parsed = parse(didUrl)
+    const resolver = this.registry[parsed.method]
+    if (resolver) {
+      const doc = await this.cache(parsed, () =>
+        resolver(parsed.did, parsed, this)
       )
-    } catch (error) {
-      return Promise.reject(error)
+      if (doc == null) {
+        throw new Error(`resolver returned null for ${parsed.did}`)
+      } else {
+        return doc
+      }
     }
+    throw new Error(`Unsupported DID method: '${parsed.method}'`)
   }
 }

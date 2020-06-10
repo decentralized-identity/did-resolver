@@ -110,7 +110,7 @@ export function getResolver() {
     did: string,
     parsed: ParsedDID,
     didResolver: Resolver
-  ): Promise<DIDDocument | null> {
+  ): Promise<DIDDocument> {
     console.log(parsed)
     // {method: 'mymethod', id: 'abcdefg', did: 'did:mymethod:abcdefg/some/path#fragment=123', path: '/some/path', fragment: 'fragment=123'}
     const didDoc = ...// lookup doc
