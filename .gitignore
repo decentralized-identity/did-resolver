@@ -3,6 +3,7 @@ lib
 .vscode/settings.json
 coverage
 .idea/
+.vscode/
 
 *.log
 

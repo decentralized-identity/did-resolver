@@ -201,6 +201,16 @@ describe('resolver', () => {
       })
     })
 
+    it('throws on null document', async () => {
+      const nullRes = new Resolver({
+        nuller: () => Promise.resolve(null)
+      })
+
+      await expect(nullRes.resolve('did:nuller:asdfghjk')).rejects.toEqual(
+        new Error('resolver returned null for did:nuller:asdfghjk')
+      )
+    })
+
     describe('caching', () => {
       describe('default', () => {
         it('should not cache', async () => {
@@ -304,6 +314,24 @@ describe('resolver', () => {
             }
           ]
         })
+        return expect(mockmethod).toBeCalledTimes(2)
+      })
+
+      it('should not cache null docs', async () => {
+        mockmethod = jest.fn().mockReturnValue(null)
+        resolver = new Resolver(
+          {
+            mock: mockmethod
+          },
+          true
+        )
+
+        await expect(resolver.resolve('did:mock:abcdef')).rejects.toEqual(
+          new Error('resolver returned null for did:mock:abcdef')
+        )
+        await expect(resolver.resolve('did:mock:abcdef')).rejects.toEqual(
+          new Error('resolver returned null for did:mock:abcdef')
+        )
         return expect(mockmethod).toBeCalledTimes(2)
       })
     })
