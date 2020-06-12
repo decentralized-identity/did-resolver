@@ -7,7 +7,7 @@ references:
     restore_cache:
       keys:
         # when lock file changes, use increasingly general patterns to restore cache
-        - npm-packages-v1-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}
+        - npm-packages-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
         - npm-packages-v1-{{ checksum "package.json" }}
         - npm-packages-v1-
 
@@ -15,7 +15,7 @@ references:
     save_cache:
       paths:
         - node_modules/
-      key: npm-packages-v1-{{ checksum "package.json" }}-{{ checksum "package-lock.json" }}
+      key: npm-packages-v1-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
 
 ###############################################################
 # Workflows
@@ -67,14 +67,14 @@ jobs:
       - *restore-npm-cache
       - run:
           name: Install node modules
-          command: npm install
+          command: yarn install --frozen-lockfile
       - *save-npm-cache
       - run:
           name: Run unit tests
-          command: npm run test-with-coverage
+          command: yarn run test:ci
       - run:
           name: Run lint
-          command: npm run lint
+          command: yarn run lint
       - persist_to_workspace:
           root: ~/project
           paths:
@@ -94,4 +94,4 @@ jobs:
           command: |
             git config user.email "devops@uport.me"
             git config user.name "uport-automation-bot"
-            npm run release
+            yarn run release
