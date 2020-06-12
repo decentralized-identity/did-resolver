@@ -36,7 +36,7 @@
     "@semantic-release/git": "7.0.17",
     "@types/jest": "24.9.1",
     "@types/node": "12.12.47",
-    "codecov": "3.6.5",
+    "codecov": "3.7.0",
     "jest": "24.9.0",
     "microbundle": "0.11.0",
     "prettier": "1.19.1",
