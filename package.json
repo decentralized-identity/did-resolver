@@ -20,14 +20,14 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "npm run format && npm test && npm run build:js",
-    "build:js": "./node_modules/.bin/microbundle",
+    "build:js": "microbundle",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "tslint -p tsconfig.json",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
     "release": "semantic-release --debug",
-    "test": "./node_modules/.bin/jest",
-    "test-with-coverage": "jest --coverage && codecov"
+    "test": "jest",
+    "test:ci": "jest --coverage && codecov"
   },
   "devDependencies": {
     "@commitlint/cli": "8.3.5",
@@ -38,7 +38,7 @@
     "@types/node": "12.12.47",
     "codecov": "3.7.0",
     "jest": "26.0.1",
-    "microbundle": "0.11.0",
+    "microbundle": "0.12.0",
     "prettier": "2.0.5",
     "regenerator-runtime": "0.13.5",
     "semantic-release": "17.0.8",
@@ -66,5 +66,8 @@
       "!src/**/*.d.ts",
       "!**/node_modules/**"
     ]
+  },
+  "resolutions": {
+    "@babel/core": "7.10.2"
   }
 }
