@@ -46,7 +46,7 @@
     "tslint": "5.19.0",
     "tslint-config-prettier": "1.18.0",
     "tslint-eslint-rules": "5.4.0",
-    "typescript": "3.6.2"
+    "typescript": "3.9.5"
   },
   "jest": {
     "transform": {
