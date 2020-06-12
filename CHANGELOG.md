@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/decentralized-identity/did-resolver/compare/2.0.0...2.0.1) (2020-06-12)
+
+
+### Bug Fixes
+
+* **ci:** fine-tune release to include yarn.lock when committing the version bump ([#46](https://github.com/decentralized-identity/did-resolver/issues/46)) ([07f2f1d](https://github.com/decentralized-identity/did-resolver/commit/07f2f1d62b097abf04518a2e70392bdeeb63da1f))
+
 # [2.0.0](https://github.com/decentralized-identity/did-resolver/compare/1.1.0...2.0.0) (2020-06-10)
 
 
