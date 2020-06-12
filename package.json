@@ -40,7 +40,7 @@
     "jest": "24.9.0",
     "microbundle": "0.11.0",
     "prettier": "1.19.1",
-    "regenerator-runtime": "0.13.3",
+    "regenerator-runtime": "0.13.5",
     "semantic-release": "15.13.28",
     "ts-jest": "24.3.0",
     "tslint": "5.19.0",
