@@ -37,7 +37,7 @@
     "@types/jest": "26.0.7",
     "@types/node": "12.12.47",
     "codecov": "3.7.2",
-    "jest": "26.1.0",
+    "jest": "26.2.1",
     "microbundle": "0.12.3",
     "prettier": "2.0.5",
     "regenerator-runtime": "0.13.7",
