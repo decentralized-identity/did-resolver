@@ -34,7 +34,7 @@ export interface ServiceEndpoint {
 export interface PublicKey {
   id: string
   type: string
-  owner: string
+  controller: string
   ethereumAddress?: string
   publicKeyBase64?: string
   publicKeyBase58?: string
