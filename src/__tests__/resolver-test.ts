@@ -152,7 +152,7 @@ describe('resolver', () => {
       publicKey: [
         {
           id: 'owner',
-          owner: '1234',
+          controller: '1234',
           type: 'xyz'
         }
       ]
@@ -166,7 +166,7 @@ describe('resolver', () => {
           publicKey: [
             {
               id: 'owner',
-              owner: '1234',
+              controller: '1234',
               type: 'xyz'
             }
           ]
@@ -194,7 +194,7 @@ describe('resolver', () => {
         publicKey: [
           {
             id: 'owner',
-            owner: '1234',
+            controller: '1234',
             type: 'xyz'
           }
         ]
@@ -225,7 +225,7 @@ describe('resolver', () => {
             publicKey: [
               {
                 id: 'owner',
-                owner: '1234',
+                controller: '1234',
                 type: 'xyz'
               }
             ]
@@ -236,7 +236,7 @@ describe('resolver', () => {
             publicKey: [
               {
                 id: 'owner',
-                owner: '1234',
+                controller: '1234',
                 type: 'xyz'
               }
             ]
@@ -262,7 +262,7 @@ describe('resolver', () => {
           publicKey: [
             {
               id: 'owner',
-              owner: '1234',
+              controller: '1234',
               type: 'xyz'
             }
           ]
@@ -273,7 +273,7 @@ describe('resolver', () => {
           publicKey: [
             {
               id: 'owner',
-              owner: '1234',
+              controller: '1234',
               type: 'xyz'
             }
           ]
@@ -296,7 +296,7 @@ describe('resolver', () => {
           publicKey: [
             {
               id: 'owner',
-              owner: '1234',
+              controller: '1234',
               type: 'xyz'
             }
           ]
@@ -309,7 +309,7 @@ describe('resolver', () => {
           publicKey: [
             {
               id: 'owner',
-              owner: '1234',
+              controller: '1234',
               type: 'xyz'
             }
           ]
