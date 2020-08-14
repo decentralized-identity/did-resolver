@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/decentralized-identity/did-resolver/compare/2.0.1...2.1.0) (2020-08-14)
+
+
+### Features
+
+* rename PublicKey attribute 'owner' to 'controller' ([#55](https://github.com/decentralized-identity/did-resolver/issues/55)) ([850e5a5](https://github.com/decentralized-identity/did-resolver/commit/850e5a5ce8eb3f2a018bc489c5c3228f14a88a23)), closes [#54](https://github.com/decentralized-identity/did-resolver/issues/54)
+
 ## [2.0.1](https://github.com/decentralized-identity/did-resolver/compare/2.0.0...2.0.1) (2020-06-12)
 
 
