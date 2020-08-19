@@ -22,6 +22,7 @@ export interface DIDDocument {
   created?: string
   updated?: string
   proof?: LinkedDataProof
+  keyAgreement?: (string|PublicKey)[]
 }
 
 export interface ServiceEndpoint {
