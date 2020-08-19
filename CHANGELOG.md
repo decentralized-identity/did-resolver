@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/decentralized-identity/did-resolver/compare/2.1.0...2.1.1) (2020-08-19)
+
+
+### Bug Fixes
+
+* **spec:** add keyAgreement property ([#56](https://github.com/decentralized-identity/did-resolver/issues/56)) ([1631fa9](https://github.com/decentralized-identity/did-resolver/commit/1631fa91cac0888c039c84a543855193081273e3))
+
 # [2.1.0](https://github.com/decentralized-identity/did-resolver/compare/2.0.1...2.1.0) (2020-08-14)
 
 
