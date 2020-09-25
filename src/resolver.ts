@@ -16,13 +16,13 @@ export interface DIDDocument {
   '@context': 'https://w3id.org/did/v1'
   id: string
   publicKey: PublicKey[]
-  authentication?: Authentication[]
+  authentication?: (string | Authentication)[]
   uportProfile?: any
   service?: ServiceEndpoint[]
   created?: string
   updated?: string
   proof?: LinkedDataProof
-  keyAgreement?: (string|PublicKey)[]
+  keyAgreement?: (string | PublicKey)[]
 }
 
 export interface ServiceEndpoint {
