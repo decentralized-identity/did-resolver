@@ -16,7 +16,7 @@ export interface DIDDocument {
   '@context': 'https://w3id.org/did/v1'
   id: string
   publicKey: PublicKey[]
-  authentication?: (string | Authentication)[]
+  authentication?: (string | PublicKey)[]
   uportProfile?: any
   service?: ServiceEndpoint[]
   created?: string
@@ -41,11 +41,6 @@ export interface PublicKey {
   publicKeyBase58?: string
   publicKeyHex?: string
   publicKeyPem?: string
-}
-
-export interface Authentication {
-  type: string
-  publicKey: string
 }
 
 export interface LinkedDataProof {
