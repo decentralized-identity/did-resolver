@@ -38,7 +38,7 @@
     "@types/node": "12.12.47",
     "codecov": "3.7.2",
     "jest": "26.4.2",
-    "microbundle": "0.12.3",
+    "microbundle": "0.12.4",
     "prettier": "2.1.2",
     "regenerator-runtime": "0.13.7",
     "semantic-release": "17.1.2",
