@@ -49,10 +49,12 @@ export interface Authentication {
 }
 
 export interface LinkedDataProof {
+  id : string
   type: string
   created: string
   creator: string
   nonce: string
+  proof: string
   signatureValue: string
 }
 
@@ -61,6 +63,17 @@ export interface Params {
 }
 
 export interface ParsedDID {
+  did: string
+  didUrl: string
+  method: string
+  id: string
+  path?: string
+  fragment?: string
+  query?: string
+  params?: Params
+}
+
+export interface VerifyDID {
   did: string
   didUrl: string
   method: string
