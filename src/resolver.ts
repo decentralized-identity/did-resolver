@@ -13,14 +13,26 @@
 // limitations under the License.
 
 export interface DIDDocument {
-  '@context': 'https://w3id.org/did/v1'
+  '@context': 'https://w3id.org/did/v1' | string | string[]
   id: string
   publicKey: PublicKey[]
-  authentication?: (string | PublicKey)[]
+  authentication?: (string | PublicKey | Authentication)[]
+  /**
+  * @deprecated This does not appear in the did-core spec
+  */
   uportProfile?: any
   service?: ServiceEndpoint[]
+  /**
+  * @deprecated this property has been removed from the did-core spec
+  */
   created?: string
+  /**
+  * @deprecated this property has been removed from the did-core spec
+  */
   updated?: string
+  /**
+  * @deprecated this property has been removed from the did-core spec
+  */
   proof?: LinkedDataProof
   keyAgreement?: (string | PublicKey)[]
 }
@@ -41,6 +53,14 @@ export interface PublicKey {
   publicKeyBase58?: string
   publicKeyHex?: string
   publicKeyPem?: string
+}
+
+/**
+* @deprecated The `authentication` array should be an array of strings or `PublicKey`
+*/
+export interface Authentication {
+  type: string
+  publicKey: string
 }
 
 export interface LinkedDataProof {
