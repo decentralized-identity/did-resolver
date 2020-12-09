@@ -1,3 +1,11 @@
+## [2.1.2](https://github.com/decentralized-identity/did-resolver/compare/2.1.1...2.1.2) (2020-12-09)
+
+
+### Bug Fixes
+
+* **types:** fix data type for "authentication" array in `DIDDocument` ([#60](https://github.com/decentralized-identity/did-resolver/issues/60)) ([d017cb3](https://github.com/decentralized-identity/did-resolver/commit/d017cb32cc24ec84994d1b7c4fb56126a796dfff))
+* extend `DIDDocument.[@context](https://github.com/context)` data type to include arrays ([#70](https://github.com/decentralized-identity/did-resolver/issues/70)) ([8781b69](https://github.com/decentralized-identity/did-resolver/commit/8781b691ebeacd24a185b96ae33d8426309df9a4)), closes [#68](https://github.com/decentralized-identity/did-resolver/issues/68)
+
 ## [2.1.1](https://github.com/decentralized-identity/did-resolver/compare/2.1.0...2.1.1) (2020-08-19)
 
 
