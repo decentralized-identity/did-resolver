@@ -68,6 +68,6 @@
     ]
   },
   "resolutions": {
-    "@babel/core": "7.12.17"
+    "@babel/core": "7.13.1"
   }
 }
