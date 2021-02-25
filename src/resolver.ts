@@ -18,21 +18,21 @@ export interface DIDDocument {
   publicKey: PublicKey[]
   authentication?: (string | PublicKey | Authentication)[]
   /**
-  * @deprecated This does not appear in the did-core spec
-  */
+   * @deprecated This does not appear in the did-core spec
+   */
   uportProfile?: any
   service?: ServiceEndpoint[]
   /**
-  * @deprecated this property has been removed from the did-core spec
-  */
+   * @deprecated this property has been removed from the did-core spec
+   */
   created?: string
   /**
-  * @deprecated this property has been removed from the did-core spec
-  */
+   * @deprecated this property has been removed from the did-core spec
+   */
   updated?: string
   /**
-  * @deprecated this property has been removed from the did-core spec
-  */
+   * @deprecated this property has been removed from the did-core spec
+   */
   proof?: LinkedDataProof
   keyAgreement?: (string | PublicKey)[]
 }
@@ -44,6 +44,27 @@ export interface ServiceEndpoint {
   description?: string
 }
 
+interface JsonWebKey {
+  alg?: string
+  crv?: string
+  d?: string
+  dp?: string
+  dq?: string
+  e?: string
+  ext?: boolean
+  k?: string
+  key_ops?: string[]
+  kid?: string
+  kty?: string
+  n?: string
+  p?: string
+  q?: string
+  qi?: string
+  use?: string
+  x?: string
+  y?: string
+}
+
 export interface PublicKey {
   id: string
   type: string
@@ -53,11 +74,12 @@ export interface PublicKey {
   publicKeyBase58?: string
   publicKeyHex?: string
   publicKeyPem?: string
+  publicKeyJwk?: JsonWebKey
 }
 
 /**
-* @deprecated The `authentication` array should be an array of strings or `PublicKey`
-*/
+ * @deprecated The `authentication` array should be an array of strings or `PublicKey`
+ */
 export interface Authentication {
   type: string
   publicKey: string
