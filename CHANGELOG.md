@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/decentralized-identity/did-resolver/compare/2.1.2...2.2.0) (2021-02-26)
+
+
+### Features
+
+* add type definition for JWK formatted public keys ([#80](https://github.com/decentralized-identity/did-resolver/issues/80)) ([f9b9c8d](https://github.com/decentralized-identity/did-resolver/commit/f9b9c8dda1066ee82055bb3b98f57b847b979463))
+
 ## [2.1.2](https://github.com/decentralized-identity/did-resolver/compare/2.1.1...2.1.2) (2020-12-09)
 
 
