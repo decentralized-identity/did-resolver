@@ -129,17 +129,13 @@ describe('resolver', () => {
       })
     })
 
-    it('fails if non compliant', () => {
-      expect(() => parse('')).toThrowError(`Missing DID`)
-      expect(() => parse('did:')).toThrowError(`Invalid DID did:`)
-      expect(() => parse('did:uport')).toThrowError(`Invalid DID did:uport`)
-      expect(() => parse('did:uport:')).toThrowError(`Invalid DID did:uport:`)
-      expect(() => parse('did:uport:1234_12313***')).toThrowError(
-        `Invalid DID did:uport:1234_12313***`
-      )
-      expect(() => parse('2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX')).toThrowError(
-        `Invalid DID 2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX`
-      )
+    it('returns null if non compliant', () => {
+      expect(parse('')).toEqual(null)
+      expect(parse('did:')).toEqual(null)
+      expect(parse('did:uport')).toEqual(null)
+      expect(parse('did:uport:')).toEqual(null)
+      expect(parse('did:uport:1234_12313***')).toEqual(null)
+      expect(parse('2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX')).toEqual(null)
     })
   })
 
@@ -147,29 +143,36 @@ describe('resolver', () => {
     let resolver: Resolver
     let mockmethod: any
     const mockReturn = Promise.resolve({
-      '@context': 'https://w3id.org/did/v1',
-      id: 'did:mock:abcdef',
-      publicKey: [
-        {
-          id: 'owner',
-          controller: '1234',
-          type: 'xyz'
-        }
-      ]
+      didResolutionMetadata: { contentType: 'application/did+json' },
+      didDocument: {
+        id: 'did:mock:abcdef',
+        verificationMethod: [
+          {
+            id: 'owner',
+            controller: '1234',
+            type: 'xyz'
+          }
+        ]
+      },
+      didDocumentMetadata: {}
     })
     beforeAll(() => {
       mockmethod = jest.fn().mockReturnValue(mockReturn)
       resolver = new Resolver({
         example: async (did, parsed) => ({
-          '@context': 'https://w3id.org/did/v1',
-          id: did,
-          publicKey: [
-            {
-              id: 'owner',
-              controller: '1234',
-              type: 'xyz'
-            }
-          ]
+          didResolutionMetadata: { contentType: 'application/did+ld+json' },
+          didDocument: {
+            '@context': 'https://w3id.org/did/v1',
+            id: did,
+            verificationMethod: [
+              {
+                id: 'owner',
+                controller: '1234',
+                type: 'xyz'
+              }
+            ]
+          },
+          didDocumentMetadata: {}
         }),
         mock: mockmethod
       })
@@ -182,33 +185,48 @@ describe('resolver', () => {
     })
 
     it('fails on parse error', async () => {
-      await expect(resolver.resolve('did:borg:')).rejects.toEqual(
-        new Error('Invalid DID did:borg:')
-      )
+      await expect(resolver.resolve('did:borg:')).resolves.toEqual({
+        didResolutionMetadata: { error: 'invalidDid' },
+        didDocument: null,
+        didDocumentMetadata: {}
+      })
     })
 
     it('resolves did document', async () => {
       await expect(resolver.resolve('did:example:123456789')).resolves.toEqual({
-        '@context': 'https://w3id.org/did/v1',
-        id: 'did:example:123456789',
-        publicKey: [
-          {
-            id: 'owner',
-            controller: '1234',
-            type: 'xyz'
-          }
-        ]
+        didResolutionMetadata: { contentType: 'application/did+ld+json' },
+        didDocument: {
+          '@context': 'https://w3id.org/did/v1',
+          id: 'did:example:123456789',
+          verificationMethod: [
+            {
+              id: 'owner',
+              controller: '1234',
+              type: 'xyz'
+            }
+          ]
+        },
+        didDocumentMetadata: {}
       })
     })
 
     it('throws on null document', async () => {
+      mockmethod = jest.fn().mockReturnValue(
+        Promise.resolve({
+          didResolutionMetadata: { error: 'notFound' },
+          didDocument: null,
+          didDocumentMetadata: {}
+        })
+      )
       const nullRes = new Resolver({
-        nuller: () => Promise.resolve(null)
+        nuller: mockmethod
       })
 
-      await expect(nullRes.resolve('did:nuller:asdfghjk')).rejects.toEqual(
-        new Error('resolver returned null for did:nuller:asdfghjk')
-      )
+      await expect(nullRes.resolve('did:nuller:asdfghjk')).resolves.toEqual({
+        didResolutionMetadata: { error: 'notFound' },
+        didDocument: null,
+        didDocumentMetadata: {}
+      })
     })
 
     describe('caching', () => {
@@ -220,26 +238,32 @@ describe('resolver', () => {
           })
 
           await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
-            '@context': 'https://w3id.org/did/v1',
-            id: 'did:mock:abcdef',
-            publicKey: [
-              {
-                id: 'owner',
-                controller: '1234',
-                type: 'xyz'
-              }
-            ]
+            didResolutionMetadata: { contentType: 'application/did+json' },
+            didDocument: {
+              id: 'did:mock:abcdef',
+              verificationMethod: [
+                {
+                  id: 'owner',
+                  controller: '1234',
+                  type: 'xyz'
+                }
+              ]
+            },
+            didDocumentMetadata: {}
           })
           await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
-            '@context': 'https://w3id.org/did/v1',
-            id: 'did:mock:abcdef',
-            publicKey: [
-              {
-                id: 'owner',
-                controller: '1234',
-                type: 'xyz'
-              }
-            ]
+            didResolutionMetadata: { contentType: 'application/did+json' },
+            didDocument: {
+              id: 'did:mock:abcdef',
+              verificationMethod: [
+                {
+                  id: 'owner',
+                  controller: '1234',
+                  type: 'xyz'
+                }
+              ]
+            },
+            didDocumentMetadata: {}
           })
           return expect(mockmethod).toBeCalledTimes(2)
         })
@@ -257,26 +281,32 @@ describe('resolver', () => {
         )
 
         await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
-          '@context': 'https://w3id.org/did/v1',
-          id: 'did:mock:abcdef',
-          publicKey: [
-            {
-              id: 'owner',
-              controller: '1234',
-              type: 'xyz'
-            }
-          ]
+          didResolutionMetadata: { contentType: 'application/did+json' },
+          didDocument: {
+            id: 'did:mock:abcdef',
+            verificationMethod: [
+              {
+                id: 'owner',
+                controller: '1234',
+                type: 'xyz'
+              }
+            ]
+          },
+          didDocumentMetadata: {}
         })
         await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
-          '@context': 'https://w3id.org/did/v1',
-          id: 'did:mock:abcdef',
-          publicKey: [
-            {
-              id: 'owner',
-              controller: '1234',
-              type: 'xyz'
-            }
-          ]
+          didResolutionMetadata: { contentType: 'application/did+json' },
+          didDocument: {
+            id: 'did:mock:abcdef',
+            verificationMethod: [
+              {
+                id: 'owner',
+                controller: '1234',
+                type: 'xyz'
+              }
+            ]
+          },
+          didDocumentMetadata: {}
         })
         return expect(mockmethod).toBeCalledTimes(1)
       })
@@ -291,33 +321,81 @@ describe('resolver', () => {
         )
 
         await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
-          '@context': 'https://w3id.org/did/v1',
-          id: 'did:mock:abcdef',
-          publicKey: [
-            {
-              id: 'owner',
-              controller: '1234',
-              type: 'xyz'
-            }
-          ]
+          didResolutionMetadata: { contentType: 'application/did+json' },
+          didDocument: {
+            id: 'did:mock:abcdef',
+            verificationMethod: [
+              {
+                id: 'owner',
+                controller: '1234',
+                type: 'xyz'
+              }
+            ]
+          },
+          didDocumentMetadata: {}
         })
         await expect(
           resolver.resolve('did:mock:abcdef;no-cache=true')
         ).resolves.toEqual({
-          '@context': 'https://w3id.org/did/v1',
-          id: 'did:mock:abcdef',
-          publicKey: [
-            {
-              id: 'owner',
-              controller: '1234',
-              type: 'xyz'
-            }
-          ]
+          didResolutionMetadata: { contentType: 'application/did+json' },
+          didDocument: {
+            id: 'did:mock:abcdef',
+            verificationMethod: [
+              {
+                id: 'owner',
+                controller: '1234',
+                type: 'xyz'
+              }
+            ]
+          },
+          didDocumentMetadata: {}
         })
         return expect(mockmethod).toBeCalledTimes(2)
       })
 
-      it('should not cache null docs', async () => {
+      it('should not cache with different params', async () => {
+        mockmethod = jest.fn().mockReturnValue(mockReturn)
+        resolver = new Resolver(
+          {
+            mock: mockmethod
+          },
+          true
+        )
+
+        await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
+          didResolutionMetadata: { contentType: 'application/did+json' },
+          didDocument: {
+            id: 'did:mock:abcdef',
+            verificationMethod: [
+              {
+                id: 'owner',
+                controller: '1234',
+                type: 'xyz'
+              }
+            ]
+          },
+          didDocumentMetadata: {}
+        })
+        await expect(
+          resolver.resolve('did:mock:abcdef?versionId=2')
+        ).resolves.toEqual({
+          didResolutionMetadata: { contentType: 'application/did+json' },
+          didDocument: {
+            id: 'did:mock:abcdef',
+            verificationMethod: [
+              {
+                id: 'owner',
+                controller: '1234',
+                type: 'xyz'
+              }
+            ]
+          },
+          didDocumentMetadata: {}
+        })
+        return expect(mockmethod).toBeCalledTimes(2)
+      })
+
+      it.skip('should not cache null docs', async () => {
         mockmethod = jest.fn().mockReturnValue(null)
         resolver = new Resolver(
           {
