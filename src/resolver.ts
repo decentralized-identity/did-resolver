@@ -124,15 +124,15 @@ export type LegacyDIDResolver = (
   resolver: Resolver
 ) => Promise<DIDDocument>
 
-interface ResolverRegistry {
+export interface ResolverRegistry {
   [index: string]: DIDResolver
 }
 
-interface LegacyResolverRegistry {
+export interface LegacyResolverRegistry {
   [index: string]: LegacyDIDResolver
 }
 
-interface ResolverOptions {
+export interface ResolverOptions {
   cache?: DIDCache | boolean | undefined
   legacyResolvers?: LegacyResolverRegistry
 }
