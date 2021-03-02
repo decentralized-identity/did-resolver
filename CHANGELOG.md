@@ -1,3 +1,16 @@
+# [3.0.0](https://github.com/decentralized-identity/did-resolver/compare/2.2.0...3.0.0) (2021-03-02)
+
+
+### Features
+
+* update resolve method signature to match did core spec ([#82](https://github.com/decentralized-identity/did-resolver/issues/82)) ([313e685](https://github.com/decentralized-identity/did-resolver/commit/313e6858b2819dd9c95b443995b39ed8fed1d678)), closes [#79](https://github.com/decentralized-identity/did-resolver/issues/79)
+
+
+### BREAKING CHANGES
+
+* the `Resolver` and `DIDResolver` data types have been upgraded.
+To use a legacy resolver that simply returns a `DIDDocument`, please register it under the `options.legacyResolvers` constructor param
+
 # [2.2.0](https://github.com/decentralized-identity/did-resolver/compare/2.1.2...2.2.0) (2021-02-26)
 
 
