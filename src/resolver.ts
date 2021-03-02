@@ -12,29 +12,51 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+export interface DIDResolutionResult {
+  didResolutionMetadata: DIDResolutionMetadata
+  didDocument: DIDDocument | null
+  didDocumentMetadata: DIDDocumentMetadata
+}
+
+export interface DIDResolutionOptions {
+  accept?: string
+  [x: string]: any
+}
+
+export interface DIDResolutionMetadata {
+  contentType?: string
+  error?: 'invalidDid' | 'notFound' | 'representationNotSupported' | 'unsupportedDidMethod' | string
+  [x: string]: any
+}
+
+export interface DIDDocumentMetadata {
+  created?: string
+  updated?: string
+  deactivated?: boolean
+  versionId?: string
+  nextUpdate?: string
+  nextVersionId?: string
+  equivalentId?: string
+  canonicalId?: string
+  [x: string]: any
+}
+
 export interface DIDDocument {
-  '@context': 'https://w3id.org/did/v1' | string | string[]
+  '@context'?: 'https://w3id.org/did/v1' | string | string[]
   id: string
-  publicKey: PublicKey[]
-  authentication?: (string | PublicKey | Authentication)[]
-  /**
-   * @deprecated This does not appear in the did-core spec
-   */
-  uportProfile?: any
+  alsoKnownAs?: string[]
+  controller?: string | string[]
+  verificationMethod?: VerificationMethod[]
+  authentication?: (string | VerificationMethod)[]
+  assertionMethod?: (string | VerificationMethod)[]
+  keyAgreement?: (string | VerificationMethod)[]
+  capabilityInvocation?: (string | VerificationMethod)[]
+  capabilityDelegation?: (string | VerificationMethod)[]
   service?: ServiceEndpoint[]
   /**
-   * @deprecated this property has been removed from the did-core spec
+   * @deprecated
    */
-  created?: string
-  /**
-   * @deprecated this property has been removed from the did-core spec
-   */
-  updated?: string
-  /**
-   * @deprecated this property has been removed from the did-core spec
-   */
-  proof?: LinkedDataProof
-  keyAgreement?: (string | PublicKey)[]
+  publicKey?: VerificationMethod[]
 }
 
 export interface ServiceEndpoint {
@@ -59,32 +81,15 @@ interface JsonWebKey {
   [x: string]: any
 }
 
-export interface PublicKey {
+export interface VerificationMethod {
   id: string
   type: string
   controller: string
-  ethereumAddress?: string
-  publicKeyBase64?: string
   publicKeyBase58?: string
-  publicKeyHex?: string
-  publicKeyPem?: string
   publicKeyJwk?: JsonWebKey
-}
-
-/**
- * @deprecated The `authentication` array should be an array of strings or `PublicKey`
- */
-export interface Authentication {
-  type: string
-  publicKey: string
-}
-
-export interface LinkedDataProof {
-  type: string
-  created: string
-  creator: string
-  nonce: string
-  signatureValue: string
+  publicKeyHex?: string
+  blockchainAccountId?: string
+  ethereumAddress?: string
 }
 
 export interface Params {
@@ -105,38 +110,53 @@ export interface ParsedDID {
 export type DIDResolver = (
   did: string,
   parsed: ParsedDID,
-  resolver: Resolver
-) => Promise<null | DIDDocument>
-export type WrappedResolver = () => Promise<null | DIDDocument>
+  resolver: Resolver,
+  options: DIDResolutionOptions
+) => Promise<DIDResolutionResult>
+export type WrappedResolver = () => Promise<DIDResolutionResult>
 export type DIDCache = (
   parsed: ParsedDID,
   resolve: WrappedResolver
-) => Promise<null | DIDDocument>
+) => Promise<DIDResolutionResult>
+export type LegacyDIDResolver = (
+  did: string,
+  parsed: ParsedDID,
+  resolver: Resolver
+) => Promise<DIDDocument>
 
 interface ResolverRegistry {
   [index: string]: DIDResolver
 }
 
+interface LegacyResolverRegistry {
+  [index: string]: LegacyDIDResolver
+}
+
+interface ResolverOptions {
+  cache?: DIDCache | boolean | undefined
+  legacyResolvers?: LegacyResolverRegistry
+}
+
 export function inMemoryCache(): DIDCache {
-  const cache: Map<string, DIDDocument | null> = new Map()
+  const cache: Map<string, DIDResolutionResult> = new Map()
   return async (parsed, resolve) => {
     if (parsed.params && parsed.params['no-cache'] === 'true')
       return await resolve()
 
-    const cached = cache.get(parsed.did)
+    const cached = cache.get(parsed.didUrl)
     if (cached !== undefined) return cached
-    const doc = await resolve()
-    if (doc !== null) {
-      cache.set(parsed.did, doc)
+    const result = await resolve()
+    if (result.didResolutionMetadata?.error !== 'notFound') {
+      cache.set(parsed.didUrl, result)
     }
-    return doc
+    return result
   }
 }
 
 export function noCache(
   parsed: ParsedDID,
   resolve: WrappedResolver
-): Promise<null | DIDDocument> {
+): Promise<DIDResolutionResult> {
   return resolve()
 }
 
@@ -152,8 +172,8 @@ const FRAGMENT = `(\#.*)?`
 const DID_MATCHER = new RegExp(
   `^did:${METHOD}:${METHOD_ID}${PARAMS}${PATH}${QUERY}${FRAGMENT}$`
 )
-export function parse(didUrl: string): ParsedDID {
-  if (didUrl === '' || !didUrl) throw new Error('Missing DID')
+export function parse(didUrl: string): ParsedDID | null {
+  if (didUrl === '' || !didUrl) return null
   const sections = didUrl.match(DID_MATCHER)
   if (sections) {
     const parts: ParsedDID = {
@@ -175,7 +195,35 @@ export function parse(didUrl: string): ParsedDID {
     if (sections[8]) parts.fragment = sections[8].slice(1)
     return parts
   }
-  throw new Error(`Invalid DID ${didUrl}`)
+  return null
+}
+
+const EMPTY_RESULT: DIDResolutionResult = {
+  didResolutionMetadata: {},
+  didDocument: null,
+  didDocumentMetadata: {}
+}
+
+
+export function wrapLegacyResolver(resolve: LegacyDIDResolver): DIDResolver {
+  return async (did, parsed, resolver, options) => {
+    try {
+      const doc = await resolve(did, parsed, resolver)
+      return {
+        ...EMPTY_RESULT,
+        didResolutionMetadata: { contentType: 'application/did+ld+json' },
+        didDocument: doc
+      }
+    } catch (e) {
+      return {
+        ...EMPTY_RESULT,
+        didResolutionMetadata: {
+          error: 'notFound',
+          message: e.toString() // This is not in spec, nut may be helpful
+        }
+      }
+    }
+  }
 }
 
 export class Resolver {
@@ -184,25 +232,37 @@ export class Resolver {
 
   constructor(
     registry: ResolverRegistry = {},
-    cache?: DIDCache | boolean | undefined
+    options: ResolverOptions = {}
   ) {
     this.registry = registry
-    this.cache = cache === true ? inMemoryCache() : cache || noCache
+    this.cache = options.cache === true ? inMemoryCache() : options.cache || noCache
+    if (options.legacyResolvers) {
+      Object.keys(options.legacyResolvers).map(methodName => {
+        if (!this.registry[methodName]) {
+          this.registry[methodName] = wrapLegacyResolver(options.legacyResolvers![methodName])
+        }
+      })
+    }
   }
 
-  async resolve(didUrl: string): Promise<DIDDocument> {
+  async resolve(
+    didUrl: string,
+    options: DIDResolutionOptions = {}
+  ): Promise<DIDResolutionResult> {
     const parsed = parse(didUrl)
-    const resolver = this.registry[parsed.method]
-    if (resolver) {
-      const doc = await this.cache(parsed, () =>
-        resolver(parsed.did, parsed, this)
-      )
-      if (doc == null) {
-        throw new Error(`resolver returned null for ${parsed.did}`)
-      } else {
-        return doc
+    if (parsed === null) {
+      return {
+        ...EMPTY_RESULT,
+        didResolutionMetadata: { error: 'invalidDid' }
       }
     }
-    throw new Error(`Unsupported DID method: '${parsed.method}'`)
+    const resolver = this.registry[parsed.method]
+    if (!resolver) {
+      return {
+        ...EMPTY_RESULT,
+        didResolutionMetadata: { error: 'unsupportedDidMethod' }
+      }
+    }
+    return this.cache(parsed, () => resolver(parsed.did, parsed, this, options))
   }
 }
