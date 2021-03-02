@@ -20,11 +20,13 @@ export interface DIDResolutionResult {
 
 export interface DIDResolutionOptions {
   accept?: string
+  [x: string]: any
 }
 
 export interface DIDResolutionMetadata {
   contentType?: string
-  error?: 'invalidDid' | 'notFound' | 'representationNotSupported'
+  error?: 'invalidDid' | 'notFound' | 'representationNotSupported' | 'unsupportedDidMethod' | string
+  [x: string]: any
 }
 
 export interface DIDDocumentMetadata {
@@ -36,6 +38,7 @@ export interface DIDDocumentMetadata {
   nextVersionId?: string
   equivalentId?: string
   canonicalId?: string
+  [x: string]: any
 }
 
 export interface DIDDocument {
@@ -50,6 +53,10 @@ export interface DIDDocument {
   capabilityInvocation?: (string | VerificationMethod)[]
   capabilityDelegation?: (string | VerificationMethod)[]
   service?: ServiceEndpoint[]
+  /**
+   * @deprecated
+   */
+  publicKey?: VerificationMethod[]
 }
 
 export interface ServiceEndpoint {
@@ -111,9 +118,23 @@ export type DIDCache = (
   parsed: ParsedDID,
   resolve: WrappedResolver
 ) => Promise<DIDResolutionResult>
+export type LegacyDIDResolver = (
+  did: string,
+  parsed: ParsedDID,
+  resolver: Resolver
+) => Promise<DIDDocument>
 
 interface ResolverRegistry {
   [index: string]: DIDResolver
+}
+
+interface LegacyResolverRegistry {
+  [index: string]: LegacyDIDResolver
+}
+
+interface ResolverOptions {
+  cache?: DIDCache | boolean | undefined
+  legacyResolvers?: LegacyResolverRegistry
 }
 
 export function inMemoryCache(): DIDCache {
@@ -124,11 +145,11 @@ export function inMemoryCache(): DIDCache {
 
     const cached = cache.get(parsed.didUrl)
     if (cached !== undefined) return cached
-    const doc = await resolve()
-    if (doc !== null) {
-      cache.set(parsed.didUrl, doc)
+    const result = await resolve()
+    if (result.didResolutionMetadata?.error !== 'notFound') {
+      cache.set(parsed.didUrl, result)
     }
-    return doc
+    return result
   }
 }
 
@@ -177,16 +198,51 @@ export function parse(didUrl: string): ParsedDID | null {
   return null
 }
 
+const EMPTY_RESULT: DIDResolutionResult = {
+  didResolutionMetadata: {},
+  didDocument: null,
+  didDocumentMetadata: {}
+}
+
+
+export function wrapLegacyResolver(resolve: LegacyDIDResolver): DIDResolver {
+  return async (did, parsed, resolver, options) => {
+    try {
+      const doc = await resolve(did, parsed, resolver)
+      return {
+        ...EMPTY_RESULT,
+        didResolutionMetadata: { contentType: 'application/did+ld+json' },
+        didDocument: doc
+      }
+    } catch (e) {
+      return {
+        ...EMPTY_RESULT,
+        didResolutionMetadata: {
+          error: 'notFound',
+          message: e.toString() // This is not in spec, nut may be helpful
+        }
+      }
+    }
+  }
+}
+
 export class Resolver {
   private registry: ResolverRegistry
   private cache: DIDCache
 
   constructor(
     registry: ResolverRegistry = {},
-    cache?: DIDCache | boolean | undefined
+    options: ResolverOptions = {}
   ) {
     this.registry = registry
-    this.cache = cache === true ? inMemoryCache() : cache || noCache
+    this.cache = options.cache === true ? inMemoryCache() : options.cache || noCache
+    if (options.legacyResolvers) {
+      Object.keys(options.legacyResolvers).map(methodName => {
+        if (!this.registry[methodName]) {
+          this.registry[methodName] = wrapLegacyResolver(options.legacyResolvers![methodName])
+        }
+      })
+    }
   }
 
   async resolve(
@@ -196,14 +252,16 @@ export class Resolver {
     const parsed = parse(didUrl)
     if (parsed === null) {
       return {
-        didResolutionMetadata: { error: 'invalidDid' },
-        didDocument: null,
-        didDocumentMetadata: {}
+        ...EMPTY_RESULT,
+        didResolutionMetadata: { error: 'invalidDid' }
       }
     }
     const resolver = this.registry[parsed.method]
     if (!resolver) {
-      throw new Error(`Unsupported DID method: '${parsed.method}'`)
+      return {
+        ...EMPTY_RESULT,
+        didResolutionMetadata: { error: 'unsupportedDidMethod' }
+      }
     }
     return this.cache(parsed, () => resolver(parsed.did, parsed, this, options))
   }

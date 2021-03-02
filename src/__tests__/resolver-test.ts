@@ -179,9 +179,11 @@ describe('resolver', () => {
     })
 
     it('fails on unhandled methods', async () => {
-      await expect(
-        resolver.resolve('did:borg:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX')
-      ).rejects.toEqual(new Error("Unsupported DID method: 'borg'"))
+      await expect(resolver.resolve('did:borg:2nQtiQG6Cgm1GY')).resolves.toEqual({
+        didResolutionMetadata: { error: 'unsupportedDidMethod' },
+        didDocument: null,
+        didDocumentMetadata: {}
+      })
     })
 
     it('fails on parse error', async () => {
@@ -211,13 +213,11 @@ describe('resolver', () => {
     })
 
     it('throws on null document', async () => {
-      mockmethod = jest.fn().mockReturnValue(
-        Promise.resolve({
-          didResolutionMetadata: { error: 'notFound' },
-          didDocument: null,
-          didDocumentMetadata: {}
-        })
-      )
+      mockmethod = jest.fn().mockReturnValue(Promise.resolve({
+        didResolutionMetadata: { error: 'notFound' },
+        didDocument: null,
+        didDocumentMetadata: {}
+      }))
       const nullRes = new Resolver({
         nuller: mockmethod
       })
@@ -277,7 +277,7 @@ describe('resolver', () => {
           {
             mock: mockmethod
           },
-          true
+          { cache: true }
         )
 
         await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
@@ -317,7 +317,7 @@ describe('resolver', () => {
           {
             mock: mockmethod
           },
-          true
+          { cache: true }
         )
 
         await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
@@ -359,7 +359,7 @@ describe('resolver', () => {
           {
             mock: mockmethod
           },
-          true
+          { cache: true }
         )
 
         await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
@@ -395,21 +395,29 @@ describe('resolver', () => {
         return expect(mockmethod).toBeCalledTimes(2)
       })
 
-      it.skip('should not cache null docs', async () => {
-        mockmethod = jest.fn().mockReturnValue(null)
+      it('should not cache null docs', async () => {
+        mockmethod = jest.fn().mockReturnValue(Promise.resolve({
+          didResolutionMetadata: { error: 'notFound' },
+          didDocument: null,
+          didDocumentMetadata: {}
+        }))
         resolver = new Resolver(
           {
             mock: mockmethod
           },
-          true
+          { cache: true }
         )
 
-        await expect(resolver.resolve('did:mock:abcdef')).rejects.toEqual(
-          new Error('resolver returned null for did:mock:abcdef')
-        )
-        await expect(resolver.resolve('did:mock:abcdef')).rejects.toEqual(
-          new Error('resolver returned null for did:mock:abcdef')
-        )
+        await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
+          didResolutionMetadata: { error: 'notFound' },
+          didDocument: null,
+          didDocumentMetadata: {}
+        })
+        await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
+          didResolutionMetadata: { error: 'notFound' },
+          didDocument: null,
+          didDocumentMetadata: {}
+        })
         return expect(mockmethod).toBeCalledTimes(2)
       })
     })
