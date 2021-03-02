@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/decentralized-identity/did-resolver/compare/3.0.0...3.0.1) (2021-03-02)
+
+
+### Bug Fixes
+
+* export interfaces needed by resolvers ([#83](https://github.com/decentralized-identity/did-resolver/issues/83)) ([89e8c9c](https://github.com/decentralized-identity/did-resolver/commit/89e8c9cb76c27da587730b6aca2665f2a5a3b0b3))
+
 # [3.0.0](https://github.com/decentralized-identity/did-resolver/compare/2.2.0...3.0.0) (2021-03-02)
 
 
