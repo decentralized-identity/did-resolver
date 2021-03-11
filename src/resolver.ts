@@ -25,7 +25,12 @@ export interface DIDResolutionOptions {
 
 export interface DIDResolutionMetadata {
   contentType?: string
-  error?: 'invalidDid' | 'notFound' | 'representationNotSupported' | 'unsupportedDidMethod' | string
+  error?:
+    | 'invalidDid'
+    | 'notFound'
+    | 'representationNotSupported'
+    | 'unsupportedDidMethod'
+    | string
   [x: string]: any
 }
 
@@ -204,7 +209,6 @@ const EMPTY_RESULT: DIDResolutionResult = {
   didDocumentMetadata: {}
 }
 
-
 export function wrapLegacyResolver(resolve: LegacyDIDResolver): DIDResolver {
   return async (did, parsed, resolver, options) => {
     try {
@@ -230,16 +234,16 @@ export class Resolver {
   private registry: ResolverRegistry
   private cache: DIDCache
 
-  constructor(
-    registry: ResolverRegistry = {},
-    options: ResolverOptions = {}
-  ) {
+  constructor(registry: ResolverRegistry = {}, options: ResolverOptions = {}) {
     this.registry = registry
-    this.cache = options.cache === true ? inMemoryCache() : options.cache || noCache
+    this.cache =
+      options.cache === true ? inMemoryCache() : options.cache || noCache
     if (options.legacyResolvers) {
-      Object.keys(options.legacyResolvers).map(methodName => {
+      Object.keys(options.legacyResolvers).map((methodName) => {
         if (!this.registry[methodName]) {
-          this.registry[methodName] = wrapLegacyResolver(options.legacyResolvers![methodName])
+          this.registry[methodName] = wrapLegacyResolver(
+            options.legacyResolvers![methodName]
+          )
         }
       })
     }

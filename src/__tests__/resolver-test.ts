@@ -179,7 +179,9 @@ describe('resolver', () => {
     })
 
     it('fails on unhandled methods', async () => {
-      await expect(resolver.resolve('did:borg:2nQtiQG6Cgm1GY')).resolves.toEqual({
+      await expect(
+        resolver.resolve('did:borg:2nQtiQG6Cgm1GY')
+      ).resolves.toEqual({
         didResolutionMetadata: { error: 'unsupportedDidMethod' },
         didDocument: null,
         didDocumentMetadata: {}
@@ -213,11 +215,13 @@ describe('resolver', () => {
     })
 
     it('throws on null document', async () => {
-      mockmethod = jest.fn().mockReturnValue(Promise.resolve({
-        didResolutionMetadata: { error: 'notFound' },
-        didDocument: null,
-        didDocumentMetadata: {}
-      }))
+      mockmethod = jest.fn().mockReturnValue(
+        Promise.resolve({
+          didResolutionMetadata: { error: 'notFound' },
+          didDocument: null,
+          didDocumentMetadata: {}
+        })
+      )
       const nullRes = new Resolver({
         nuller: mockmethod
       })
@@ -396,11 +400,13 @@ describe('resolver', () => {
       })
 
       it('should not cache null docs', async () => {
-        mockmethod = jest.fn().mockReturnValue(Promise.resolve({
-          didResolutionMetadata: { error: 'notFound' },
-          didDocument: null,
-          didDocumentMetadata: {}
-        }))
+        mockmethod = jest.fn().mockReturnValue(
+          Promise.resolve({
+            didResolutionMetadata: { error: 'notFound' },
+            didDocument: null,
+            didDocumentMetadata: {}
+          })
+        )
         resolver = new Resolver(
           {
             mock: mockmethod
