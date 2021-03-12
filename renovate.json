@@ -6,7 +6,7 @@
   "labels": ["maintenance"],
   "packageRules": [
     {
-      "packagePatterns": [ "jest", "codecov", "lint", "jsdoc", "bundle", "prettier", "webpack", "typescript" ],
+      "packagePatterns": [ "jest", "codecov", "lint", "jsdoc", "bundle", "prettier", "webpack", "typescript", "babel" ],
       "groupName": "builders-and-testers",
       "automerge": true,
       "automergeType": "branch",
