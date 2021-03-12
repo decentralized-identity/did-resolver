@@ -12,29 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Extensible = Record<string, any>
+
 export interface DIDResolutionResult {
   didResolutionMetadata: DIDResolutionMetadata
   didDocument: DIDDocument | null
   didDocumentMetadata: DIDDocumentMetadata
 }
 
-export interface DIDResolutionOptions {
+export interface DIDResolutionOptions extends Extensible {
   accept?: string
-  [x: string]: any
 }
 
-export interface DIDResolutionMetadata {
+export interface DIDResolutionMetadata extends Extensible {
   contentType?: string
-  error?:
-    | 'invalidDid'
-    | 'notFound'
-    | 'representationNotSupported'
-    | 'unsupportedDidMethod'
-    | string
-  [x: string]: any
+  error?: 'invalidDid' | 'notFound' | 'representationNotSupported' | 'unsupportedDidMethod' | string
 }
 
-export interface DIDDocumentMetadata {
+export interface DIDDocumentMetadata extends Extensible {
   created?: string
   updated?: string
   deactivated?: boolean
@@ -43,11 +39,10 @@ export interface DIDDocumentMetadata {
   nextVersionId?: string
   equivalentId?: string
   canonicalId?: string
-  [x: string]: any
 }
 
 export interface DIDDocument {
-  '@context'?: 'https://w3id.org/did/v1' | string | string[]
+  '@context'?: 'https://www.w3.org/ns/did/v1' | string | string[]
   id: string
   alsoKnownAs?: string[]
   controller?: string | string[]
@@ -71,7 +66,7 @@ export interface ServiceEndpoint {
   description?: string
 }
 
-interface JsonWebKey {
+interface JsonWebKey extends Extensible {
   alg?: string
   crv?: string
   e?: string
@@ -83,7 +78,6 @@ interface JsonWebKey {
   use?: string
   x?: string
   y?: string
-  [x: string]: any
 }
 
 export interface VerificationMethod {
@@ -119,15 +113,8 @@ export type DIDResolver = (
   options: DIDResolutionOptions
 ) => Promise<DIDResolutionResult>
 export type WrappedResolver = () => Promise<DIDResolutionResult>
-export type DIDCache = (
-  parsed: ParsedDID,
-  resolve: WrappedResolver
-) => Promise<DIDResolutionResult>
-export type LegacyDIDResolver = (
-  did: string,
-  parsed: ParsedDID,
-  resolver: Resolver
-) => Promise<DIDDocument>
+export type DIDCache = (parsed: ParsedDID, resolve: WrappedResolver) => Promise<DIDResolutionResult>
+export type LegacyDIDResolver = (did: string, parsed: ParsedDID, resolver: Resolver) => Promise<DIDDocument>
 
 export interface ResolverRegistry {
   [index: string]: DIDResolver
@@ -144,9 +131,8 @@ export interface ResolverOptions {
 
 export function inMemoryCache(): DIDCache {
   const cache: Map<string, DIDResolutionResult> = new Map()
-  return async (parsed, resolve) => {
-    if (parsed.params && parsed.params['no-cache'] === 'true')
-      return await resolve()
+  return async (parsed: ParsedDID, resolve) => {
+    if (parsed.params && parsed.params['no-cache'] === 'true') return await resolve()
 
     const cached = cache.get(parsed.didUrl)
     if (cached !== undefined) return cached
@@ -158,10 +144,7 @@ export function inMemoryCache(): DIDCache {
   }
 }
 
-export function noCache(
-  parsed: ParsedDID,
-  resolve: WrappedResolver
-): Promise<DIDResolutionResult> {
+export function noCache(parsed: ParsedDID, resolve: WrappedResolver): Promise<DIDResolutionResult> {
   return resolve()
 }
 
@@ -174,9 +157,7 @@ const PARAMS = `((${PARAM})*)`
 const PATH = `(\/[^#?]*)?`
 const QUERY = `([?][^#]*)?`
 const FRAGMENT = `(\#.*)?`
-const DID_MATCHER = new RegExp(
-  `^did:${METHOD}:${METHOD_ID}${PARAMS}${PATH}${QUERY}${FRAGMENT}$`
-)
+const DID_MATCHER = new RegExp(`^did:${METHOD}:${METHOD_ID}${PARAMS}${PATH}${QUERY}${FRAGMENT}$`)
 export function parse(didUrl: string): ParsedDID | null {
   if (didUrl === '' || !didUrl) return null
   const sections = didUrl.match(DID_MATCHER)
@@ -185,7 +166,7 @@ export function parse(didUrl: string): ParsedDID | null {
       did: `did:${sections[1]}:${sections[2]}`,
       method: sections[1],
       id: sections[2],
-      didUrl
+      didUrl,
     }
     if (sections[4]) {
       const params = sections[4].slice(1).split(';')
@@ -206,25 +187,25 @@ export function parse(didUrl: string): ParsedDID | null {
 const EMPTY_RESULT: DIDResolutionResult = {
   didResolutionMetadata: {},
   didDocument: null,
-  didDocumentMetadata: {}
+  didDocumentMetadata: {},
 }
 
 export function wrapLegacyResolver(resolve: LegacyDIDResolver): DIDResolver {
-  return async (did, parsed, resolver, options) => {
+  return async (did, parsed, resolver) => {
     try {
       const doc = await resolve(did, parsed, resolver)
       return {
         ...EMPTY_RESULT,
         didResolutionMetadata: { contentType: 'application/did+ld+json' },
-        didDocument: doc
+        didDocument: doc,
       }
     } catch (e) {
       return {
         ...EMPTY_RESULT,
         didResolutionMetadata: {
           error: 'notFound',
-          message: e.toString() // This is not in spec, nut may be helpful
-        }
+          message: e.toString(), // This is not in spec, nut may be helpful
+        },
       }
     }
   }
@@ -236,12 +217,12 @@ export class Resolver {
 
   constructor(registry: ResolverRegistry = {}, options: ResolverOptions = {}) {
     this.registry = registry
-    this.cache =
-      options.cache === true ? inMemoryCache() : options.cache || noCache
+    this.cache = options.cache === true ? inMemoryCache() : options.cache || noCache
     if (options.legacyResolvers) {
       Object.keys(options.legacyResolvers).map((methodName) => {
         if (!this.registry[methodName]) {
           this.registry[methodName] = wrapLegacyResolver(
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             options.legacyResolvers![methodName]
           )
         }
@@ -249,22 +230,19 @@ export class Resolver {
     }
   }
 
-  async resolve(
-    didUrl: string,
-    options: DIDResolutionOptions = {}
-  ): Promise<DIDResolutionResult> {
+  async resolve(didUrl: string, options: DIDResolutionOptions = {}): Promise<DIDResolutionResult> {
     const parsed = parse(didUrl)
     if (parsed === null) {
       return {
         ...EMPTY_RESULT,
-        didResolutionMetadata: { error: 'invalidDid' }
+        didResolutionMetadata: { error: 'invalidDid' },
       }
     }
     const resolver = this.registry[parsed.method]
     if (!resolver) {
       return {
         ...EMPTY_RESULT,
-        didResolutionMetadata: { error: 'unsupportedDidMethod' }
+        didResolutionMetadata: { error: 'unsupportedDidMethod' },
       }
     }
     return this.cache(parsed, () => resolver(parsed.did, parsed, this, options))
