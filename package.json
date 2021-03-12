@@ -12,11 +12,13 @@
     "url": "git@github.com:decentralized-identity/did-resolver.git"
   },
   "files": [
-    "dist",
     "lib",
     "src"
   ],
   "author": "Pelle Braendgaard <pelle.braendgaard@consensys.net>",
+  "contributors": [
+    "Mircea Nistor <mircea.nistor@mesh.xyz>"
+  ],
   "license": "Apache-2.0",
   "scripts": {
     "build": "npm run format && npm test && npm run build:js",
@@ -30,6 +32,7 @@
     "test:ci": "jest --coverage && codecov"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "7.13.0",
     "@commitlint/cli": "12.0.1",
     "@commitlint/config-conventional": "12.0.1",
     "@semantic-release/changelog": "5.0.1",
@@ -44,32 +47,8 @@
     "jest": "26.6.3",
     "microbundle": "0.13.0",
     "prettier": "2.2.1",
-    "regenerator-runtime": "0.13.7",
     "semantic-release": "17.4.2",
-    "ts-jest": "26.5.3",
-    "tslint": "6.1.3",
-    "tslint-config-prettier": "1.18.0",
-    "tslint-eslint-rules": "5.4.0",
     "typescript": "4.2.3"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json"
-    ],
-    "coverageDirectory": "./coverage/",
-    "collectCoverageFrom": [
-      "src/**/*.{ts,tsx}",
-      "!src/**/*.d.ts",
-      "!**/node_modules/**"
-    ]
   },
   "resolutions": {
     "@babel/core": "7.13.10"

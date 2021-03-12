@@ -27,7 +27,12 @@ export interface DIDResolutionOptions extends Extensible {
 
 export interface DIDResolutionMetadata extends Extensible {
   contentType?: string
-  error?: 'invalidDid' | 'notFound' | 'representationNotSupported' | 'unsupportedDidMethod' | string
+  error?:
+    | 'invalidDid'
+    | 'notFound'
+    | 'representationNotSupported'
+    | 'unsupportedDidMethod'
+    | string
 }
 
 export interface DIDDocumentMetadata extends Extensible {
@@ -113,8 +118,15 @@ export type DIDResolver = (
   options: DIDResolutionOptions
 ) => Promise<DIDResolutionResult>
 export type WrappedResolver = () => Promise<DIDResolutionResult>
-export type DIDCache = (parsed: ParsedDID, resolve: WrappedResolver) => Promise<DIDResolutionResult>
-export type LegacyDIDResolver = (did: string, parsed: ParsedDID, resolver: Resolver) => Promise<DIDDocument>
+export type DIDCache = (
+  parsed: ParsedDID,
+  resolve: WrappedResolver
+) => Promise<DIDResolutionResult>
+export type LegacyDIDResolver = (
+  did: string,
+  parsed: ParsedDID,
+  resolver: Resolver
+) => Promise<DIDDocument>
 
 export interface ResolverRegistry {
   [index: string]: DIDResolver
@@ -132,7 +144,8 @@ export interface ResolverOptions {
 export function inMemoryCache(): DIDCache {
   const cache: Map<string, DIDResolutionResult> = new Map()
   return async (parsed: ParsedDID, resolve) => {
-    if (parsed.params && parsed.params['no-cache'] === 'true') return await resolve()
+    if (parsed.params && parsed.params['no-cache'] === 'true')
+      return await resolve()
 
     const cached = cache.get(parsed.didUrl)
     if (cached !== undefined) return cached
@@ -144,7 +157,10 @@ export function inMemoryCache(): DIDCache {
   }
 }
 
-export function noCache(parsed: ParsedDID, resolve: WrappedResolver): Promise<DIDResolutionResult> {
+export function noCache(
+  parsed: ParsedDID,
+  resolve: WrappedResolver
+): Promise<DIDResolutionResult> {
   return resolve()
 }
 
@@ -157,7 +173,9 @@ const PARAMS = `((${PARAM})*)`
 const PATH = `(\/[^#?]*)?`
 const QUERY = `([?][^#]*)?`
 const FRAGMENT = `(\#.*)?`
-const DID_MATCHER = new RegExp(`^did:${METHOD}:${METHOD_ID}${PARAMS}${PATH}${QUERY}${FRAGMENT}$`)
+const DID_MATCHER = new RegExp(
+  `^did:${METHOD}:${METHOD_ID}${PARAMS}${PATH}${QUERY}${FRAGMENT}$`
+)
 export function parse(didUrl: string): ParsedDID | null {
   if (didUrl === '' || !didUrl) return null
   const sections = didUrl.match(DID_MATCHER)
@@ -217,7 +235,8 @@ export class Resolver {
 
   constructor(registry: ResolverRegistry = {}, options: ResolverOptions = {}) {
     this.registry = registry
-    this.cache = options.cache === true ? inMemoryCache() : options.cache || noCache
+    this.cache =
+      options.cache === true ? inMemoryCache() : options.cache || noCache
     if (options.legacyResolvers) {
       Object.keys(options.legacyResolvers).map((methodName) => {
         if (!this.registry[methodName]) {
@@ -230,7 +249,10 @@ export class Resolver {
     }
   }
 
-  async resolve(didUrl: string, options: DIDResolutionOptions = {}): Promise<DIDResolutionResult> {
+  async resolve(
+    didUrl: string,
+    options: DIDResolutionOptions = {}
+  ): Promise<DIDResolutionResult> {
     const parsed = parse(didUrl)
     if (parsed === null) {
       return {
