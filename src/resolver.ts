@@ -165,7 +165,7 @@ export function noCache(
   return resolve()
 }
 
-const ID_CHAR = '[a-zA-Z0-9_.-]'
+const ID_CHAR = '[a-zA-Z0-9_.%-]'
 const METHOD = '([a-zA-Z0-9_]+)'
 const METHOD_ID = `(${ID_CHAR}+(:${ID_CHAR}+)*)`
 const PARAM_CHAR = '[a-zA-Z0-9_.:%-]'
