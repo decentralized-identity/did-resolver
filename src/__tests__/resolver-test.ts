@@ -109,6 +109,20 @@ describe('resolver', () => {
         }
       })
 
+      expect(parse('did:web:example.com%3A8443')).toEqual({
+        method: 'web',
+        id: 'example.com%3A8443',
+        didUrl: 'did:web:example.com%3A8443',
+        did: 'did:web:example.com%3A8443'
+      })
+
+      expect(parse('did:web:example.com:path:some%2Bsubpath')).toEqual({
+        method: 'web',
+        id: 'example.com:path:some%2Bsubpath',
+        didUrl: 'did:web:example.com:path:some%2Bsubpath',
+        did: 'did:web:example.com:path:some%2Bsubpath'
+      })
+
       expect(
         parse(
           'did:example:test:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high/some/path?foo=bar#key1'
