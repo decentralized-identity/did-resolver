@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/decentralized-identity/did-resolver/compare/3.0.1...3.0.2) (2021-03-12)
+
+
+### Bug Fixes
+
+* allow the use of % char in method specific ID ([#86](https://github.com/decentralized-identity/did-resolver/issues/86)) ([3a21466](https://github.com/decentralized-identity/did-resolver/commit/3a21466a05107ed53cf0a9a10106fedc63e41727))
+
 ## [3.0.1](https://github.com/decentralized-identity/did-resolver/compare/3.0.0...3.0.1) (2021-03-02)
 
 
