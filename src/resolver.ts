@@ -184,7 +184,7 @@ export function parse(didUrl: string): ParsedDID | null {
       did: `did:${sections[1]}:${sections[2]}`,
       method: sections[1],
       id: sections[2],
-      didUrl,
+      didUrl
     }
     if (sections[4]) {
       const params = sections[4].slice(1).split(';')
@@ -205,7 +205,7 @@ export function parse(didUrl: string): ParsedDID | null {
 const EMPTY_RESULT: DIDResolutionResult = {
   didResolutionMetadata: {},
   didDocument: null,
-  didDocumentMetadata: {},
+  didDocumentMetadata: {}
 }
 
 export function wrapLegacyResolver(resolve: LegacyDIDResolver): DIDResolver {
@@ -215,15 +215,15 @@ export function wrapLegacyResolver(resolve: LegacyDIDResolver): DIDResolver {
       return {
         ...EMPTY_RESULT,
         didResolutionMetadata: { contentType: 'application/did+ld+json' },
-        didDocument: doc,
+        didDocument: doc
       }
     } catch (e) {
       return {
         ...EMPTY_RESULT,
         didResolutionMetadata: {
           error: 'notFound',
-          message: e.toString(), // This is not in spec, nut may be helpful
-        },
+          message: e.toString() // This is not in spec, nut may be helpful
+        }
       }
     }
   }
@@ -257,14 +257,14 @@ export class Resolver {
     if (parsed === null) {
       return {
         ...EMPTY_RESULT,
-        didResolutionMetadata: { error: 'invalidDid' },
+        didResolutionMetadata: { error: 'invalidDid' }
       }
     }
     const resolver = this.registry[parsed.method]
     if (!resolver) {
       return {
         ...EMPTY_RESULT,
-        didResolutionMetadata: { error: 'unsupportedDidMethod' },
+        didResolutionMetadata: { error: 'unsupportedDidMethod' }
       }
     }
     return this.cache(parsed, () => resolver(parsed.did, parsed, this, options))

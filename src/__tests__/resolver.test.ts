@@ -21,7 +21,7 @@ describe('resolver', () => {
         method: 'uport',
         id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
         did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
-        didUrl: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
+        didUrl: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX'
       })
       expect(
         parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path')
@@ -30,7 +30,7 @@ describe('resolver', () => {
         id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
         did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
         didUrl: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path',
-        path: '/some/path',
+        path: '/some/path'
       })
       expect(
         parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX#fragment=123')
@@ -39,7 +39,7 @@ describe('resolver', () => {
         id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
         did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
         didUrl: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX#fragment=123',
-        fragment: 'fragment=123',
+        fragment: 'fragment=123'
       })
       expect(
         parse(
@@ -52,7 +52,7 @@ describe('resolver', () => {
         didUrl:
           'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123',
         path: '/some/path',
-        fragment: 'fragment=123',
+        fragment: 'fragment=123'
       })
       expect(
         parse('did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI')
@@ -60,7 +60,7 @@ describe('resolver', () => {
         method: 'nacl',
         id: 'Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI',
         did: 'did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI',
-        didUrl: 'did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI',
+        didUrl: 'did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI'
       })
       expect(
         parse('did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high')
@@ -71,8 +71,8 @@ describe('resolver', () => {
         didUrl: 'did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high',
         params: {
           service: 'agent',
-          'foo:bar': 'high',
-        },
+          'foo:bar': 'high'
+        }
       })
       expect(
         parse(
@@ -87,8 +87,8 @@ describe('resolver', () => {
         query: 'foo=bar',
         params: {
           service: 'agent',
-          'foo:bar': 'high',
-        },
+          'foo:bar': 'high'
+        }
       })
       expect(
         parse(
@@ -105,22 +105,22 @@ describe('resolver', () => {
         fragment: 'key1',
         params: {
           service: 'agent',
-          'foo:bar': 'high',
-        },
+          'foo:bar': 'high'
+        }
       })
 
       expect(parse('did:web:example.com%3A8443')).toEqual({
         method: 'web',
         id: 'example.com%3A8443',
         didUrl: 'did:web:example.com%3A8443',
-        did: 'did:web:example.com%3A8443',
+        did: 'did:web:example.com%3A8443'
       })
 
       expect(parse('did:web:example.com:path:some%2Bsubpath')).toEqual({
         method: 'web',
         id: 'example.com:path:some%2Bsubpath',
         didUrl: 'did:web:example.com:path:some%2Bsubpath',
-        did: 'did:web:example.com:path:some%2Bsubpath',
+        did: 'did:web:example.com:path:some%2Bsubpath'
       })
 
       expect(
@@ -138,8 +138,8 @@ describe('resolver', () => {
         fragment: 'key1',
         params: {
           service: 'agent',
-          'foo:bar': 'high',
-        },
+          'foo:bar': 'high'
+        }
       })
     })
 
@@ -165,11 +165,11 @@ describe('resolver', () => {
           {
             id: 'owner',
             controller: '1234',
-            type: 'xyz',
-          },
-        ],
+            type: 'xyz'
+          }
+        ]
       },
-      didDocumentMetadata: {},
+      didDocumentMetadata: {}
     })
     beforeAll(() => {
       mockmethod = jest.fn().mockReturnValue(mockReturn)
@@ -183,13 +183,13 @@ describe('resolver', () => {
               {
                 id: 'owner',
                 controller: '1234',
-                type: 'xyz',
-              },
-            ],
+                type: 'xyz'
+              }
+            ]
           },
-          didDocumentMetadata: {},
+          didDocumentMetadata: {}
         }),
-        mock: mockmethod,
+        mock: mockmethod
       })
     })
 
@@ -199,7 +199,7 @@ describe('resolver', () => {
       ).resolves.toEqual({
         didResolutionMetadata: { error: 'unsupportedDidMethod' },
         didDocument: null,
-        didDocumentMetadata: {},
+        didDocumentMetadata: {}
       })
     })
 
@@ -207,7 +207,7 @@ describe('resolver', () => {
       await expect(resolver.resolve('did:borg:')).resolves.toEqual({
         didResolutionMetadata: { error: 'invalidDid' },
         didDocument: null,
-        didDocumentMetadata: {},
+        didDocumentMetadata: {}
       })
     })
 
@@ -221,11 +221,11 @@ describe('resolver', () => {
             {
               id: 'owner',
               controller: '1234',
-              type: 'xyz',
-            },
-          ],
+              type: 'xyz'
+            }
+          ]
         },
-        didDocumentMetadata: {},
+        didDocumentMetadata: {}
       })
     })
 
@@ -241,11 +241,11 @@ describe('resolver', () => {
                 {
                   id: 'owner',
                   controller: '1234',
-                  type: 'xyz',
-                },
-              ],
-            }),
-          },
+                  type: 'xyz'
+                }
+              ]
+            })
+          }
         }
       )
 
@@ -260,11 +260,11 @@ describe('resolver', () => {
             {
               id: 'owner',
               controller: '1234',
-              type: 'xyz',
-            },
-          ],
+              type: 'xyz'
+            }
+          ]
         },
-        didDocumentMetadata: {},
+        didDocumentMetadata: {}
       })
     })
 
@@ -273,17 +273,17 @@ describe('resolver', () => {
         Promise.resolve({
           didResolutionMetadata: { error: 'notFound' },
           didDocument: null,
-          didDocumentMetadata: {},
+          didDocumentMetadata: {}
         })
       )
       const nullRes = new Resolver({
-        nuller: mockmethod,
+        nuller: mockmethod
       })
 
       await expect(nullRes.resolve('did:nuller:asdfghjk')).resolves.toEqual({
         didResolutionMetadata: { error: 'notFound' },
         didDocument: null,
-        didDocumentMetadata: {},
+        didDocumentMetadata: {}
       })
     })
 
@@ -292,7 +292,7 @@ describe('resolver', () => {
         it('should not cache', async () => {
           mockmethod = jest.fn().mockReturnValue(mockReturn)
           resolver = new Resolver({
-            mock: mockmethod,
+            mock: mockmethod
           })
 
           await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
@@ -303,11 +303,11 @@ describe('resolver', () => {
                 {
                   id: 'owner',
                   controller: '1234',
-                  type: 'xyz',
-                },
-              ],
+                  type: 'xyz'
+                }
+              ]
             },
-            didDocumentMetadata: {},
+            didDocumentMetadata: {}
           })
           await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
             didResolutionMetadata: { contentType: 'application/did+json' },
@@ -317,11 +317,11 @@ describe('resolver', () => {
                 {
                   id: 'owner',
                   controller: '1234',
-                  type: 'xyz',
-                },
-              ],
+                  type: 'xyz'
+                }
+              ]
             },
-            didDocumentMetadata: {},
+            didDocumentMetadata: {}
           })
           return expect(mockmethod).toBeCalledTimes(2)
         })
@@ -333,7 +333,7 @@ describe('resolver', () => {
         mockmethod = jest.fn().mockReturnValue(mockReturn)
         resolver = new Resolver(
           {
-            mock: mockmethod,
+            mock: mockmethod
           },
           { cache: true }
         )
@@ -346,11 +346,11 @@ describe('resolver', () => {
               {
                 id: 'owner',
                 controller: '1234',
-                type: 'xyz',
-              },
-            ],
+                type: 'xyz'
+              }
+            ]
           },
-          didDocumentMetadata: {},
+          didDocumentMetadata: {}
         })
         await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
           didResolutionMetadata: { contentType: 'application/did+json' },
@@ -360,11 +360,11 @@ describe('resolver', () => {
               {
                 id: 'owner',
                 controller: '1234',
-                type: 'xyz',
-              },
-            ],
+                type: 'xyz'
+              }
+            ]
           },
-          didDocumentMetadata: {},
+          didDocumentMetadata: {}
         })
         return expect(mockmethod).toBeCalledTimes(1)
       })
@@ -373,7 +373,7 @@ describe('resolver', () => {
         mockmethod = jest.fn().mockReturnValue(mockReturn)
         resolver = new Resolver(
           {
-            mock: mockmethod,
+            mock: mockmethod
           },
           { cache: true }
         )
@@ -386,11 +386,11 @@ describe('resolver', () => {
               {
                 id: 'owner',
                 controller: '1234',
-                type: 'xyz',
-              },
-            ],
+                type: 'xyz'
+              }
+            ]
           },
-          didDocumentMetadata: {},
+          didDocumentMetadata: {}
         })
         await expect(
           resolver.resolve('did:mock:abcdef;no-cache=true')
@@ -402,11 +402,11 @@ describe('resolver', () => {
               {
                 id: 'owner',
                 controller: '1234',
-                type: 'xyz',
-              },
-            ],
+                type: 'xyz'
+              }
+            ]
           },
-          didDocumentMetadata: {},
+          didDocumentMetadata: {}
         })
         return expect(mockmethod).toBeCalledTimes(2)
       })
@@ -415,7 +415,7 @@ describe('resolver', () => {
         mockmethod = jest.fn().mockReturnValue(mockReturn)
         resolver = new Resolver(
           {
-            mock: mockmethod,
+            mock: mockmethod
           },
           { cache: true }
         )
@@ -428,11 +428,11 @@ describe('resolver', () => {
               {
                 id: 'owner',
                 controller: '1234',
-                type: 'xyz',
-              },
-            ],
+                type: 'xyz'
+              }
+            ]
           },
-          didDocumentMetadata: {},
+          didDocumentMetadata: {}
         })
         await expect(
           resolver.resolve('did:mock:abcdef?versionId=2')
@@ -444,11 +444,11 @@ describe('resolver', () => {
               {
                 id: 'owner',
                 controller: '1234',
-                type: 'xyz',
-              },
-            ],
+                type: 'xyz'
+              }
+            ]
           },
-          didDocumentMetadata: {},
+          didDocumentMetadata: {}
         })
         return expect(mockmethod).toBeCalledTimes(2)
       })
@@ -458,12 +458,12 @@ describe('resolver', () => {
           Promise.resolve({
             didResolutionMetadata: { error: 'notFound' },
             didDocument: null,
-            didDocumentMetadata: {},
+            didDocumentMetadata: {}
           })
         )
         resolver = new Resolver(
           {
-            mock: mockmethod,
+            mock: mockmethod
           },
           { cache: true }
         )
@@ -471,12 +471,12 @@ describe('resolver', () => {
         await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
           didResolutionMetadata: { error: 'notFound' },
           didDocument: null,
-          didDocumentMetadata: {},
+          didDocumentMetadata: {}
         })
         await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
           didResolutionMetadata: { error: 'notFound' },
           didDocument: null,
-          didDocumentMetadata: {},
+          didDocumentMetadata: {}
         })
         return expect(mockmethod).toBeCalledTimes(2)
       })
