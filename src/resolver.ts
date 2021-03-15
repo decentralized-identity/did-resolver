@@ -12,18 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Extensible = Record<string, any>
+
 export interface DIDResolutionResult {
   didResolutionMetadata: DIDResolutionMetadata
   didDocument: DIDDocument | null
   didDocumentMetadata: DIDDocumentMetadata
 }
 
-export interface DIDResolutionOptions {
+export interface DIDResolutionOptions extends Extensible {
   accept?: string
-  [x: string]: any
 }
 
-export interface DIDResolutionMetadata {
+export interface DIDResolutionMetadata extends Extensible {
   contentType?: string
   error?:
     | 'invalidDid'
@@ -31,10 +33,9 @@ export interface DIDResolutionMetadata {
     | 'representationNotSupported'
     | 'unsupportedDidMethod'
     | string
-  [x: string]: any
 }
 
-export interface DIDDocumentMetadata {
+export interface DIDDocumentMetadata extends Extensible {
   created?: string
   updated?: string
   deactivated?: boolean
@@ -43,11 +44,10 @@ export interface DIDDocumentMetadata {
   nextVersionId?: string
   equivalentId?: string
   canonicalId?: string
-  [x: string]: any
 }
 
 export interface DIDDocument {
-  '@context'?: 'https://w3id.org/did/v1' | string | string[]
+  '@context'?: 'https://www.w3.org/ns/did/v1' | string | string[]
   id: string
   alsoKnownAs?: string[]
   controller?: string | string[]
@@ -71,7 +71,7 @@ export interface ServiceEndpoint {
   description?: string
 }
 
-interface JsonWebKey {
+interface JsonWebKey extends Extensible {
   alg?: string
   crv?: string
   e?: string
@@ -83,7 +83,6 @@ interface JsonWebKey {
   use?: string
   x?: string
   y?: string
-  [x: string]: any
 }
 
 export interface VerificationMethod {
@@ -144,7 +143,7 @@ export interface ResolverOptions {
 
 export function inMemoryCache(): DIDCache {
   const cache: Map<string, DIDResolutionResult> = new Map()
-  return async (parsed, resolve) => {
+  return async (parsed: ParsedDID, resolve) => {
     if (parsed.params && parsed.params['no-cache'] === 'true')
       return await resolve()
 
@@ -210,7 +209,7 @@ const EMPTY_RESULT: DIDResolutionResult = {
 }
 
 export function wrapLegacyResolver(resolve: LegacyDIDResolver): DIDResolver {
-  return async (did, parsed, resolver, options) => {
+  return async (did, parsed, resolver) => {
     try {
       const doc = await resolve(did, parsed, resolver)
       return {
@@ -242,6 +241,7 @@ export class Resolver {
       Object.keys(options.legacyResolvers).map((methodName) => {
         if (!this.registry[methodName]) {
           this.registry[methodName] = wrapLegacyResolver(
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
             options.legacyResolvers![methodName]
           )
         }

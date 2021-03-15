@@ -155,6 +155,7 @@ describe('resolver', () => {
 
   describe('resolve', () => {
     let resolver: Resolver
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockmethod: any
     const mockReturn = Promise.resolve({
       didResolutionMetadata: { contentType: 'application/did+json' },
@@ -173,7 +174,7 @@ describe('resolver', () => {
     beforeAll(() => {
       mockmethod = jest.fn().mockReturnValue(mockReturn)
       resolver = new Resolver({
-        example: async (did, parsed) => ({
+        example: async (did: string) => ({
           didResolutionMetadata: { contentType: 'application/did+ld+json' },
           didDocument: {
             '@context': 'https://w3id.org/did/v1',
@@ -216,6 +217,45 @@ describe('resolver', () => {
         didDocument: {
           '@context': 'https://w3id.org/did/v1',
           id: 'did:example:123456789',
+          verificationMethod: [
+            {
+              id: 'owner',
+              controller: '1234',
+              type: 'xyz'
+            }
+          ]
+        },
+        didDocumentMetadata: {}
+      })
+    })
+
+    it('resolves did document with legacy resolver', async () => {
+      const resolverWithLegacy = new Resolver(
+        {},
+        {
+          legacyResolvers: {
+            legacy: async (did: string) => ({
+              '@context': 'https://w3id.org/did/v1',
+              id: did,
+              verificationMethod: [
+                {
+                  id: 'owner',
+                  controller: '1234',
+                  type: 'xyz'
+                }
+              ]
+            })
+          }
+        }
+      )
+
+      await expect(
+        resolverWithLegacy.resolve('did:legacy:123456789')
+      ).resolves.toEqual({
+        didResolutionMetadata: { contentType: 'application/did+ld+json' },
+        didDocument: {
+          '@context': 'https://w3id.org/did/v1',
+          id: 'did:legacy:123456789',
           verificationMethod: [
             {
               id: 'owner',

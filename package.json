@@ -2,27 +2,29 @@
   "name": "did-resolver",
   "version": "3.0.2",
   "description": "Resolve DID documents",
-  "main": "lib/resolver.js",
-  "types": "lib/resolver.d.ts",
+  "main": "lib/resolver.umd.js",
   "source": "src/resolver.ts",
-  "module": "lib/resolver.esm.js",
+  "module": "lib/resolver.modern.js",
+  "types": "lib/resolver.d.ts",
   "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git@github.com:decentralized-identity/did-resolver.git"
   },
   "files": [
-    "dist",
     "lib",
     "src"
   ],
   "author": "Pelle Braendgaard <pelle.braendgaard@consensys.net>",
+  "contributors": [
+    "Mircea Nistor <mircea.nistor@mesh.xyz>"
+  ],
   "license": "Apache-2.0",
   "scripts": {
     "build": "npm run format && npm test && npm run build:js",
     "build:js": "microbundle",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "tslint -p tsconfig.json",
+    "lint": "eslint \"src/**/*.[jt]s\"",
+    "format": "prettier --write \"src/**/*.[jt]s\"",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
     "release": "semantic-release --debug",
@@ -30,42 +32,21 @@
     "test:ci": "jest --coverage && codecov"
   },
   "devDependencies": {
-    "@commitlint/cli": "12.0.1",
-    "@commitlint/config-conventional": "12.0.1",
+    "@babel/preset-typescript": "7.13.0",
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/git": "9.0.0",
     "@types/jest": "26.0.20",
-    "@types/node": "12.20.5",
+    "@types/node": "14.14.33",
+    "@typescript-eslint/eslint-plugin": "4.17.0",
+    "@typescript-eslint/parser": "4.17.0",
     "codecov": "3.8.1",
+    "eslint": "7.21.0",
+    "eslint-config-prettier": "8.1.0",
     "jest": "26.6.3",
     "microbundle": "0.13.0",
     "prettier": "2.2.1",
-    "regenerator-runtime": "0.13.7",
     "semantic-release": "17.4.2",
-    "ts-jest": "26.5.3",
-    "tslint": "6.1.3",
-    "tslint-config-prettier": "1.18.0",
-    "tslint-eslint-rules": "5.4.0",
     "typescript": "4.2.3"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json"
-    ],
-    "coverageDirectory": "./coverage/",
-    "collectCoverageFrom": [
-      "src/**/*.{ts,tsx}",
-      "!src/**/*.d.ts",
-      "!**/node_modules/**"
-    ]
   },
   "resolutions": {
     "@babel/core": "7.13.10"
