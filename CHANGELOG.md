@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/decentralized-identity/did-resolver/compare/3.0.2...3.1.0) (2021-03-26)
+
+
+### Features
+
+* export the Resolvable type definition ([ddc0ec2](https://github.com/decentralized-identity/did-resolver/commit/ddc0ec2d59e93769e0d523ced2e1c05f43712110))
+
 ## [3.0.2](https://github.com/decentralized-identity/did-resolver/compare/3.0.1...3.0.2) (2021-03-12)
 
 
