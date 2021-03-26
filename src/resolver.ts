@@ -1,4 +1,4 @@
-// Copyright 2018 ConsenSys AG
+// Copyright 2018 Consensys AG
 
 // Licensed under the Apache License, Version 2.0(the "License");
 // you may not use this file except in compliance with the License.
@@ -229,7 +229,14 @@ export function wrapLegacyResolver(resolve: LegacyDIDResolver): DIDResolver {
   }
 }
 
-export class Resolver {
+export type Resolvable = {
+  resolve: (
+    didUrl: string,
+    options?: DIDResolutionOptions
+  ) => Promise<DIDResolutionResult>
+}
+
+export class Resolver implements Resolvable {
   private registry: ResolverRegistry
   private cache: DIDCache
 
