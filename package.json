@@ -2,10 +2,12 @@
   "name": "did-resolver",
   "version": "3.1.0",
   "description": "Resolve DID documents",
-  "main": "lib/resolver.umd.js",
   "source": "src/resolver.ts",
-  "module": "lib/resolver.modern.js",
+  "main": "lib/resolver.js",
+  "module": "lib/resolver.module.js",
   "types": "lib/resolver.d.ts",
+  "unpkg": "lib/resolver.umd.js",
+  "umd:main": "lib/resolver.umd.js",
   "sideEffects": false,
   "repository": {
     "type": "git",
@@ -13,35 +15,53 @@
   },
   "files": [
     "lib",
-    "src"
+    "src",
+    "LICENSE"
   ],
-  "author": "Pelle Braendgaard <pelle.braendgaard@consensys.net>",
+  "author": "Pelle Braendgaard",
   "contributors": [
     "Mircea Nistor <mircea.nistor@mesh.xyz>"
   ],
   "license": "Apache-2.0",
   "scripts": {
-    "build": "npm run format && npm test && npm run build:js",
-    "build:js": "microbundle",
-    "lint": "eslint \"src/**/*.[jt]s\"",
-    "format": "prettier --write \"src/**/*.[jt]s\"",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run lint",
-    "release": "semantic-release --debug",
     "test": "jest",
-    "test:ci": "jest --coverage && codecov"
+    "test:ci": "jest --coverage && codecov",
+    "build:js": "microbundle --compress=false",
+    "build": "yarn lint && yarn build:js && yarn test",
+    "format": "prettier --write \"src/**/*.[jt]s\"",
+    "lint": "eslint --ignore-pattern \"src/**/*.test.[jt]s\" \"src/**/*.[jt]s\"",
+    "prepare": "yarn build",
+    "prepublishOnly": "yarn test:ci && yarn format && yarn lint",
+    "release": "semantic-release --debug"
+  },
+  "jest": {
+    "clearMocks": true,
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}",
+      "!src/**/*.d.ts",
+      "!**/node_modules/**",
+      "!**/__tests__/**"
+    ],
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/__tests__/**/*.test.[jt]s"
+    ]
   },
   "devDependencies": {
+    "@babel/core": "7.14.6",
+    "@babel/preset-env": "7.14.7",
     "@babel/preset-typescript": "7.14.5",
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/git": "9.0.0",
     "@types/jest": "26.0.23",
-    "@types/node": "14.17.4",
     "@typescript-eslint/eslint-plugin": "4.28.0",
     "@typescript-eslint/parser": "4.28.0",
+    "babel-jest": "27.0.5",
     "codecov": "3.8.2",
     "eslint": "7.29.0",
     "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-jest": "24.3.6",
+    "eslint-plugin-prettier": "3.4.0",
     "jest": "27.0.5",
     "microbundle": "0.13.3",
     "prettier": "2.3.1",
