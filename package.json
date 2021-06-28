@@ -6,8 +6,6 @@
   "main": "lib/resolver.js",
   "module": "lib/resolver.module.js",
   "types": "lib/resolver.d.ts",
-  "unpkg": "lib/resolver.umd.js",
-  "umd:main": "lib/resolver.umd.js",
   "sideEffects": false,
   "repository": {
     "type": "git",
