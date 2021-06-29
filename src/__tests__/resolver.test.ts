@@ -21,125 +21,99 @@ describe('resolver', () => {
         method: 'uport',
         id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
         did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
-        didUrl: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX'
+        didUrl: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
       })
-      expect(
-        parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path')
-      ).toEqual({
+      expect(parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path')).toEqual({
         method: 'uport',
         id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
         did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
         didUrl: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path',
-        path: '/some/path'
+        path: '/some/path',
       })
-      expect(
-        parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX#fragment=123')
-      ).toEqual({
+      expect(parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX#fragment=123')).toEqual({
         method: 'uport',
         id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
         did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
         didUrl: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX#fragment=123',
-        fragment: 'fragment=123'
+        fragment: 'fragment=123',
       })
-      expect(
-        parse(
-          'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123'
-        )
-      ).toEqual({
+      expect(parse('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123')).toEqual({
         method: 'uport',
         id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
         did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
-        didUrl:
-          'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123',
+        didUrl: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123',
         path: '/some/path',
-        fragment: 'fragment=123'
+        fragment: 'fragment=123',
       })
-      expect(
-        parse('did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI')
-      ).toEqual({
+      expect(parse('did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI')).toEqual({
         method: 'nacl',
         id: 'Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI',
         did: 'did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI',
-        didUrl: 'did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI'
+        didUrl: 'did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI',
       })
-      expect(
-        parse('did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high')
-      ).toEqual({
+      expect(parse('did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high')).toEqual({
         method: 'example',
         id: '21tDAKCERh95uGgKbJNHYp',
         did: 'did:example:21tDAKCERh95uGgKbJNHYp',
         didUrl: 'did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high',
         params: {
           service: 'agent',
-          'foo:bar': 'high'
-        }
+          'foo:bar': 'high',
+        },
       })
-      expect(
-        parse(
-          'did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high?foo=bar'
-        )
-      ).toEqual({
+      expect(parse('did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high?foo=bar')).toEqual({
         method: 'example',
         id: '21tDAKCERh95uGgKbJNHYp',
-        didUrl:
-          'did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high?foo=bar',
+        didUrl: 'did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high?foo=bar',
         did: 'did:example:21tDAKCERh95uGgKbJNHYp',
         query: 'foo=bar',
         params: {
           service: 'agent',
-          'foo:bar': 'high'
-        }
+          'foo:bar': 'high',
+        },
       })
-      expect(
-        parse(
-          'did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high/some/path?foo=bar#key1'
-        )
-      ).toEqual({
+      expect(parse('did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high/some/path?foo=bar#key1')).toEqual({
         method: 'example',
         id: '21tDAKCERh95uGgKbJNHYp',
-        didUrl:
-          'did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high/some/path?foo=bar#key1',
+        didUrl: 'did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high/some/path?foo=bar#key1',
         did: 'did:example:21tDAKCERh95uGgKbJNHYp',
         query: 'foo=bar',
         path: '/some/path',
         fragment: 'key1',
         params: {
           service: 'agent',
-          'foo:bar': 'high'
-        }
+          'foo:bar': 'high',
+        },
       })
 
       expect(parse('did:web:example.com%3A8443')).toEqual({
         method: 'web',
         id: 'example.com%3A8443',
         didUrl: 'did:web:example.com%3A8443',
-        did: 'did:web:example.com%3A8443'
+        did: 'did:web:example.com%3A8443',
       })
 
       expect(parse('did:web:example.com:path:some%2Bsubpath')).toEqual({
         method: 'web',
         id: 'example.com:path:some%2Bsubpath',
         didUrl: 'did:web:example.com:path:some%2Bsubpath',
-        did: 'did:web:example.com:path:some%2Bsubpath'
+        did: 'did:web:example.com:path:some%2Bsubpath',
       })
 
       expect(
-        parse(
-          'did:example:test:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high/some/path?foo=bar#key1'
-        )
+        parse('did:example:test:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high/some/path?foo=bar#key1')
       ).toEqual({
         method: 'example',
         id: 'test:21tDAKCERh95uGgKbJNHYp',
-        didUrl:
-          'did:example:test:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high/some/path?foo=bar#key1',
+        didUrl: 'did:example:test:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high/some/path?foo=bar#key1',
         did: 'did:example:test:21tDAKCERh95uGgKbJNHYp',
         query: 'foo=bar',
         path: '/some/path',
         fragment: 'key1',
         params: {
           service: 'agent',
-          'foo:bar': 'high'
-        }
+          'foo:bar': 'high',
+        },
       })
     })
 
@@ -165,11 +139,11 @@ describe('resolver', () => {
           {
             id: 'owner',
             controller: '1234',
-            type: 'xyz'
-          }
-        ]
+            type: 'xyz',
+          },
+        ],
       },
-      didDocumentMetadata: {}
+      didDocumentMetadata: {},
     })
     beforeAll(() => {
       mockmethod = jest.fn().mockReturnValue(mockReturn)
@@ -183,23 +157,21 @@ describe('resolver', () => {
               {
                 id: 'owner',
                 controller: '1234',
-                type: 'xyz'
-              }
-            ]
+                type: 'xyz',
+              },
+            ],
           },
-          didDocumentMetadata: {}
+          didDocumentMetadata: {},
         }),
-        mock: mockmethod
+        mock: mockmethod,
       })
     })
 
     it('fails on unhandled methods', async () => {
-      await expect(
-        resolver.resolve('did:borg:2nQtiQG6Cgm1GY')
-      ).resolves.toEqual({
+      await expect(resolver.resolve('did:borg:2nQtiQG6Cgm1GY')).resolves.toEqual({
         didResolutionMetadata: { error: 'unsupportedDidMethod' },
         didDocument: null,
-        didDocumentMetadata: {}
+        didDocumentMetadata: {},
       })
     })
 
@@ -207,7 +179,7 @@ describe('resolver', () => {
       await expect(resolver.resolve('did:borg:')).resolves.toEqual({
         didResolutionMetadata: { error: 'invalidDid' },
         didDocument: null,
-        didDocumentMetadata: {}
+        didDocumentMetadata: {},
       })
     })
 
@@ -221,11 +193,11 @@ describe('resolver', () => {
             {
               id: 'owner',
               controller: '1234',
-              type: 'xyz'
-            }
-          ]
+              type: 'xyz',
+            },
+          ],
         },
-        didDocumentMetadata: {}
+        didDocumentMetadata: {},
       })
     })
 
@@ -241,17 +213,15 @@ describe('resolver', () => {
                 {
                   id: 'owner',
                   controller: '1234',
-                  type: 'xyz'
-                }
-              ]
-            })
-          }
+                  type: 'xyz',
+                },
+              ],
+            }),
+          },
         }
       )
 
-      await expect(
-        resolverWithLegacy.resolve('did:legacy:123456789')
-      ).resolves.toEqual({
+      await expect(resolverWithLegacy.resolve('did:legacy:123456789')).resolves.toEqual({
         didResolutionMetadata: { contentType: 'application/did+ld+json' },
         didDocument: {
           '@context': 'https://w3id.org/did/v1',
@@ -260,11 +230,11 @@ describe('resolver', () => {
             {
               id: 'owner',
               controller: '1234',
-              type: 'xyz'
-            }
-          ]
+              type: 'xyz',
+            },
+          ],
         },
-        didDocumentMetadata: {}
+        didDocumentMetadata: {},
       })
     })
 
@@ -273,17 +243,17 @@ describe('resolver', () => {
         Promise.resolve({
           didResolutionMetadata: { error: 'notFound' },
           didDocument: null,
-          didDocumentMetadata: {}
+          didDocumentMetadata: {},
         })
       )
       const nullRes = new Resolver({
-        nuller: mockmethod
+        nuller: mockmethod,
       })
 
       await expect(nullRes.resolve('did:nuller:asdfghjk')).resolves.toEqual({
         didResolutionMetadata: { error: 'notFound' },
         didDocument: null,
-        didDocumentMetadata: {}
+        didDocumentMetadata: {},
       })
     })
 
@@ -292,7 +262,7 @@ describe('resolver', () => {
         it('should not cache', async () => {
           mockmethod = jest.fn().mockReturnValue(mockReturn)
           resolver = new Resolver({
-            mock: mockmethod
+            mock: mockmethod,
           })
 
           await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
@@ -303,11 +273,11 @@ describe('resolver', () => {
                 {
                   id: 'owner',
                   controller: '1234',
-                  type: 'xyz'
-                }
-              ]
+                  type: 'xyz',
+                },
+              ],
             },
-            didDocumentMetadata: {}
+            didDocumentMetadata: {},
           })
           await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
             didResolutionMetadata: { contentType: 'application/did+json' },
@@ -317,11 +287,11 @@ describe('resolver', () => {
                 {
                   id: 'owner',
                   controller: '1234',
-                  type: 'xyz'
-                }
-              ]
+                  type: 'xyz',
+                },
+              ],
             },
-            didDocumentMetadata: {}
+            didDocumentMetadata: {},
           })
           return expect(mockmethod).toBeCalledTimes(2)
         })
@@ -333,7 +303,7 @@ describe('resolver', () => {
         mockmethod = jest.fn().mockReturnValue(mockReturn)
         resolver = new Resolver(
           {
-            mock: mockmethod
+            mock: mockmethod,
           },
           { cache: true }
         )
@@ -346,11 +316,11 @@ describe('resolver', () => {
               {
                 id: 'owner',
                 controller: '1234',
-                type: 'xyz'
-              }
-            ]
+                type: 'xyz',
+              },
+            ],
           },
-          didDocumentMetadata: {}
+          didDocumentMetadata: {},
         })
         await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
           didResolutionMetadata: { contentType: 'application/did+json' },
@@ -360,11 +330,11 @@ describe('resolver', () => {
               {
                 id: 'owner',
                 controller: '1234',
-                type: 'xyz'
-              }
-            ]
+                type: 'xyz',
+              },
+            ],
           },
-          didDocumentMetadata: {}
+          didDocumentMetadata: {},
         })
         return expect(mockmethod).toBeCalledTimes(1)
       })
@@ -373,7 +343,7 @@ describe('resolver', () => {
         mockmethod = jest.fn().mockReturnValue(mockReturn)
         resolver = new Resolver(
           {
-            mock: mockmethod
+            mock: mockmethod,
           },
           { cache: true }
         )
@@ -386,15 +356,13 @@ describe('resolver', () => {
               {
                 id: 'owner',
                 controller: '1234',
-                type: 'xyz'
-              }
-            ]
+                type: 'xyz',
+              },
+            ],
           },
-          didDocumentMetadata: {}
+          didDocumentMetadata: {},
         })
-        await expect(
-          resolver.resolve('did:mock:abcdef;no-cache=true')
-        ).resolves.toEqual({
+        await expect(resolver.resolve('did:mock:abcdef;no-cache=true')).resolves.toEqual({
           didResolutionMetadata: { contentType: 'application/did+json' },
           didDocument: {
             id: 'did:mock:abcdef',
@@ -402,11 +370,11 @@ describe('resolver', () => {
               {
                 id: 'owner',
                 controller: '1234',
-                type: 'xyz'
-              }
-            ]
+                type: 'xyz',
+              },
+            ],
           },
-          didDocumentMetadata: {}
+          didDocumentMetadata: {},
         })
         return expect(mockmethod).toBeCalledTimes(2)
       })
@@ -415,7 +383,7 @@ describe('resolver', () => {
         mockmethod = jest.fn().mockReturnValue(mockReturn)
         resolver = new Resolver(
           {
-            mock: mockmethod
+            mock: mockmethod,
           },
           { cache: true }
         )
@@ -428,15 +396,13 @@ describe('resolver', () => {
               {
                 id: 'owner',
                 controller: '1234',
-                type: 'xyz'
-              }
-            ]
+                type: 'xyz',
+              },
+            ],
           },
-          didDocumentMetadata: {}
+          didDocumentMetadata: {},
         })
-        await expect(
-          resolver.resolve('did:mock:abcdef?versionId=2')
-        ).resolves.toEqual({
+        await expect(resolver.resolve('did:mock:abcdef?versionId=2')).resolves.toEqual({
           didResolutionMetadata: { contentType: 'application/did+json' },
           didDocument: {
             id: 'did:mock:abcdef',
@@ -444,11 +410,11 @@ describe('resolver', () => {
               {
                 id: 'owner',
                 controller: '1234',
-                type: 'xyz'
-              }
-            ]
+                type: 'xyz',
+              },
+            ],
           },
-          didDocumentMetadata: {}
+          didDocumentMetadata: {},
         })
         return expect(mockmethod).toBeCalledTimes(2)
       })
@@ -458,12 +424,12 @@ describe('resolver', () => {
           Promise.resolve({
             didResolutionMetadata: { error: 'notFound' },
             didDocument: null,
-            didDocumentMetadata: {}
+            didDocumentMetadata: {},
           })
         )
         resolver = new Resolver(
           {
-            mock: mockmethod
+            mock: mockmethod,
           },
           { cache: true }
         )
@@ -471,12 +437,12 @@ describe('resolver', () => {
         await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
           didResolutionMetadata: { error: 'notFound' },
           didDocument: null,
-          didDocumentMetadata: {}
+          didDocumentMetadata: {},
         })
         await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
           didResolutionMetadata: { error: 'notFound' },
           didDocument: null,
-          didDocumentMetadata: {}
+          didDocumentMetadata: {},
         })
         return expect(mockmethod).toBeCalledTimes(2)
       })
