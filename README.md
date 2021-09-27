@@ -50,7 +50,7 @@ const resolver = new Resolver(ethrResolver)
 
 ### Using legacy DID Method resolvers
 
-DID Method resolvers created before version `3.0.0` of this library can be passed as legacy resolvers.
+DID Method resolvers created before version `3.0.0` of this library can be used as legacy resolvers.
 
 ```js
 import { Resolver } from 'did-resolver'
@@ -78,10 +78,10 @@ const resolver = new Resolver(ethrResolver)
 The resolver presents a simple `resolve()` function that returns a ES6 Promise returning the DID document.
 
 ```js
-resolver.resolve('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123').then(doc => console.log)
+resolver.resolve('did:ethr:0xF3beAC30C498D9E26865F34fCAa57dBB935b0D74/some/path#fragment=123').then(doc => console.log)
 
 // You can also use ES7 async/await syntax
-const doc = await resolver.resolve('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123')
+const doc = await resolver.resolve('did:ethr:0xF3beAC30C498D9E26865F34fCAa57dBB935b0D74/some/path#fragment=123')
 ```
 
 ## Caching
