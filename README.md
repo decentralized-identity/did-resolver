@@ -89,11 +89,11 @@ const doc = await resolver.resolve('did:ethr:0xF3beAC30C498D9E26865F34fCAa57dBB9
 Resolving DID Documents can be expensive. It is in most cases best to cache DID documents. Caching has to be
 specifically enabled using the `cache` parameter
 
-The built in cache uses a Map, but does not have an automatic TTL, so entries don't expire. This is fine in most web,
-mobile and serverless contexts. If you run a long running process you may want to use an existing configurable caching
+The built-in cache uses a Map, but does not have an automatic TTL, so entries don't expire. This is fine in most web,
+mobile and serverless contexts. If you run a long-running process you may want to use an existing configurable caching
 system.
 
-The built in Cache can be enabled by passing in a `true` value to the constructor:
+The built-in Cache can be enabled by passing in a `true` value to the constructor:
 
 ```js
 const resolver = new DIDResolver({
@@ -173,4 +173,3 @@ import MyMethod from 'mymethod-did-resolver'
 const myResolver = MyMethod.getResolver()
 const resolver = new DIDResolver(myResolver)
 ```
-
