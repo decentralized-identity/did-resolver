@@ -60,7 +60,7 @@ export type DIDDocument = {
    */
   publicKey?: VerificationMethod[]
 } & {
-  [x in KeyCapabilitySection]: (string | VerificationMethod)[]
+  [x in KeyCapabilitySection]?: (string | VerificationMethod)[]
 }
 
 export interface ServiceEndpoint {
