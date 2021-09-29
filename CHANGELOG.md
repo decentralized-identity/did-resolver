@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/decentralized-identity/did-resolver/compare/3.1.1...3.1.2) (2021-09-29)
+
+
+### Bug Fixes
+
+* editorial fix to trigger a new release ([52098b4](https://github.com/decentralized-identity/did-resolver/commit/52098b4f1b11fd2b0b17e2314eef7438fc321785))
+
 ## [3.1.1](https://github.com/decentralized-identity/did-resolver/compare/3.1.0...3.1.1) (2021-09-27)
 
 
