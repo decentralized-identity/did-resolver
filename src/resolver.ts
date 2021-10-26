@@ -154,9 +154,10 @@ export function noCache(parsed: ParsedDID, resolve: WrappedResolver): Promise<DI
   return resolve()
 }
 
-const ID_CHAR = '[a-zA-Z0-9_.%-]'
-const METHOD = '([a-zA-Z0-9_]+)'
-const METHOD_ID = `(${ID_CHAR}+(:${ID_CHAR}+)*)`
+const PCT_ENCODED = '(?:%[0-9a-fA-F]{2})'
+const ID_CHAR = `(?:[a-zA-Z0-9._-]|${PCT_ENCODED})`
+const METHOD = '([a-z0-9]+)'
+const METHOD_ID = `((?:${ID_CHAR}*:)*(${ID_CHAR}+))`
 const PARAM_CHAR = '[a-zA-Z0-9_.:%-]'
 const PARAM = `;${PARAM_CHAR}+=${PARAM_CHAR}*`
 const PARAMS = `((${PARAM})*)`

@@ -85,21 +85,18 @@ describe('resolver', () => {
           'foo:bar': 'high',
         },
       })
-
       expect(parse('did:web:example.com%3A8443')).toEqual({
         method: 'web',
         id: 'example.com%3A8443',
         didUrl: 'did:web:example.com%3A8443',
         did: 'did:web:example.com%3A8443',
       })
-
       expect(parse('did:web:example.com:path:some%2Bsubpath')).toEqual({
         method: 'web',
         id: 'example.com:path:some%2Bsubpath',
         didUrl: 'did:web:example.com:path:some%2Bsubpath',
         did: 'did:web:example.com:path:some%2Bsubpath',
       })
-
       expect(
         parse('did:example:test:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high/some/path?foo=bar#key1')
       ).toEqual({
@@ -115,6 +112,18 @@ describe('resolver', () => {
           'foo:bar': 'high',
         },
       })
+      expect(parse('did:123:test::test2')).toEqual({
+        method: '123',
+        id: 'test::test2',
+        didUrl: 'did:123:test::test2',
+        did: 'did:123:test::test2',
+      })
+      expect(parse('did:method:%12%AF')).toEqual({
+        method: 'method',
+        id: '%12%AF',
+        didUrl: 'did:method:%12%AF',
+        did: 'did:method:%12%AF',
+      })
     })
 
     it('returns null if non compliant', () => {
@@ -124,6 +133,10 @@ describe('resolver', () => {
       expect(parse('did:uport:')).toEqual(null)
       expect(parse('did:uport:1234_12313***')).toEqual(null)
       expect(parse('2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX')).toEqual(null)
+      expect(parse('did:method:%12%1')).toEqual(null)
+      expect(parse('did:method:%1233%Ay')).toEqual(null)
+      expect(parse('did:CAP:id')).toEqual(null)
+      expect(parse('did:method:id::anotherid%r9')).toEqual(null)
     })
   })
 
