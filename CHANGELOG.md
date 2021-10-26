@@ -1,3 +1,10 @@
+## [3.1.3](https://github.com/decentralized-identity/did-resolver/compare/3.1.2...3.1.3) (2021-10-26)
+
+
+### Bug Fixes
+
+* update regex to match DID specification ([#105](https://github.com/decentralized-identity/did-resolver/issues/105)) ([4f71bc5](https://github.com/decentralized-identity/did-resolver/commit/4f71bc5fa3806d97bfd6f0494b4aaa88d0ef39db)), closes [#104](https://github.com/decentralized-identity/did-resolver/issues/104)
+
 ## [3.1.2](https://github.com/decentralized-identity/did-resolver/compare/3.1.1...3.1.2) (2021-09-29)
 
 
