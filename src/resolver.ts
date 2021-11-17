@@ -206,12 +206,12 @@ export function wrapLegacyResolver(resolve: LegacyDIDResolver): DIDResolver {
         didResolutionMetadata: { contentType: 'application/did+ld+json' },
         didDocument: doc,
       }
-    } catch (e) {
+    } catch (e: any) {
       return {
         ...EMPTY_RESULT,
         didResolutionMetadata: {
           error: 'notFound',
-          message: e.toString(), // This is not in spec, nut may be helpful
+          message: e.toString(), // This is not in spec, but may be helpful
         },
       }
     }
