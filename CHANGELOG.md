@@ -1,3 +1,10 @@
+## [3.1.4](https://github.com/decentralized-identity/did-resolver/compare/3.1.3...3.1.4) (2021-12-04)
+
+
+### Bug Fixes
+
+* add optional `[@context](https://github.com/context)` to result data type ([#108](https://github.com/decentralized-identity/did-resolver/issues/108)) ([39a3301](https://github.com/decentralized-identity/did-resolver/commit/39a330197b2125b59456284e01732340149bab82))
+
 ## [3.1.3](https://github.com/decentralized-identity/did-resolver/compare/3.1.2...3.1.3) (2021-10-26)
 
 
