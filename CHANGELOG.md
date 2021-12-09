@@ -1,3 +1,10 @@
+## [3.1.5](https://github.com/decentralized-identity/did-resolver/compare/3.1.4...3.1.5) (2021-12-09)
+
+
+### Bug Fixes
+
+* use Resolvable as type instead of Resolver ([#110](https://github.com/decentralized-identity/did-resolver/issues/110)) ([35c4d67](https://github.com/decentralized-identity/did-resolver/commit/35c4d67e5750338983a89c125f424d7d039aaf68)), closes [#109](https://github.com/decentralized-identity/did-resolver/issues/109)
+
 ## [3.1.4](https://github.com/decentralized-identity/did-resolver/compare/3.1.3...3.1.4) (2021-12-04)
 
 
