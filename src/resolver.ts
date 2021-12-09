@@ -116,16 +116,14 @@ export interface ParsedDID {
 export type DIDResolver = (
   did: string,
   parsed: ParsedDID,
-  resolver: Resolver,
+  resolver: Resolvable,
   options: DIDResolutionOptions
 ) => Promise<DIDResolutionResult>
 export type WrappedResolver = () => Promise<DIDResolutionResult>
 export type DIDCache = (parsed: ParsedDID, resolve: WrappedResolver) => Promise<DIDResolutionResult>
-export type LegacyDIDResolver = (did: string, parsed: ParsedDID, resolver: Resolver) => Promise<DIDDocument>
+export type LegacyDIDResolver = (did: string, parsed: ParsedDID, resolver: Resolvable) => Promise<DIDDocument>
 
-export interface ResolverRegistry {
-  [index: string]: DIDResolver
-}
+export type ResolverRegistry = Record<string, DIDResolver>
 
 export interface LegacyResolverRegistry {
   [index: string]: LegacyDIDResolver
@@ -166,6 +164,7 @@ const PATH = `(/[^#?]*)?`
 const QUERY = `([?][^#]*)?`
 const FRAGMENT = `(#.*)?`
 const DID_MATCHER = new RegExp(`^did:${METHOD}:${METHOD_ID}${PARAMS}${PATH}${QUERY}${FRAGMENT}$`)
+
 export function parse(didUrl: string): ParsedDID | null {
   if (didUrl === '' || !didUrl) return null
   const sections = didUrl.match(DID_MATCHER)
@@ -207,6 +206,7 @@ export function wrapLegacyResolver(resolve: LegacyDIDResolver): DIDResolver {
         didResolutionMetadata: { contentType: 'application/did+ld+json' },
         didDocument: doc,
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       return {
         ...EMPTY_RESULT,
@@ -219,7 +219,7 @@ export function wrapLegacyResolver(resolve: LegacyDIDResolver): DIDResolver {
   }
 }
 
-export type Resolvable = {
+export interface Resolvable {
   resolve: (didUrl: string, options?: DIDResolutionOptions) => Promise<DIDResolutionResult>
 }
 
