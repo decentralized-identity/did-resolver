@@ -46,25 +46,25 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "7.16.0",
-    "@babel/preset-env": "7.16.4",
-    "@babel/preset-typescript": "7.16.0",
+    "@babel/core": "7.16.5",
+    "@babel/preset-env": "7.16.5",
+    "@babel/preset-typescript": "7.16.5",
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/git": "9.0.1",
-    "@types/jest": "27.0.2",
+    "@types/jest": "27.0.3",
     "@typescript-eslint/eslint-plugin": "4.33.0",
     "@typescript-eslint/parser": "4.33.0",
-    "babel-jest": "27.3.1",
+    "babel-jest": "27.4.5",
     "codecov": "3.8.2",
     "eslint": "7.32.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-jest": "24.7.0",
     "eslint-plugin-prettier": "4.0.0",
-    "jest": "27.3.1",
-    "microbundle": "0.14.1",
-    "prettier": "2.4.1",
+    "jest": "27.4.5",
+    "microbundle": "0.14.2",
+    "prettier": "2.5.1",
     "semantic-release": "17.4.7",
-    "typescript": "4.5.2"
+    "typescript": "4.5.4"
   },
   "resolutions": {
     "@babel/core": "7.16.5"
