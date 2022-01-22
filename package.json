@@ -67,6 +67,6 @@
     "typescript": "4.5.4"
   },
   "resolutions": {
-    "@babel/core": "7.16.10"
+    "@babel/core": "7.16.12"
   }
 }
