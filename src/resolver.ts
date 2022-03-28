@@ -71,7 +71,7 @@ export interface ServiceEndpoint {
   description?: string
 }
 
-interface JsonWebKey extends Extensible {
+export interface JsonWebKey extends Extensible {
   alg?: string
   crv?: string
   e?: string
