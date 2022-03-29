@@ -71,7 +71,14 @@ export interface ServiceEndpoint {
   description?: string
 }
 
-interface JsonWebKey extends Extensible {
+/**
+ * Encapsulates a JSON web key type that includes only the public properties that
+ * can be used in DID documents.
+ *
+ * The private properties are intentionally omitted to discourage the use
+ * (and accidental disclosure) of private keys in DID documents.
+ */
+export interface JsonWebKey extends Extensible {
   alg?: string
   crv?: string
   e?: string
