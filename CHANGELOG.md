@@ -1,3 +1,10 @@
+# [3.2.0](https://github.com/decentralized-identity/did-resolver/compare/3.1.5...3.2.0) (2022-03-29)
+
+
+### Features
+
+* export JsonWebKey Interface ([#126](https://github.com/decentralized-identity/did-resolver/issues/126)) ([519c8bd](https://github.com/decentralized-identity/did-resolver/commit/519c8bd4dcfbb06259c146c66003a8e3a98f4e9d)), closes [#125](https://github.com/decentralized-identity/did-resolver/issues/125)
+
 ## [3.1.5](https://github.com/decentralized-identity/did-resolver/compare/3.1.4...3.1.5) (2021-12-09)
 
 
