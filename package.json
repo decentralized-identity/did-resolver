@@ -17,8 +17,8 @@
   ],
   "exports": {
     ".": {
-      "require": "./lib/index.cjs",
-      "import": "./lib/index.module.js"
+      "require": "./lib/resolver.cjs",
+      "import": "./lib/resolver.module.js"
     }
   },
   "sideEffects": false,
