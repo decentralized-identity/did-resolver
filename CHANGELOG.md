@@ -1,3 +1,10 @@
+## [3.2.2](https://github.com/decentralized-identity/did-resolver/compare/3.2.1...3.2.2) (2022-06-05)
+
+
+### Bug Fixes
+
+* **build:** fix typo in package exports ([832ea58](https://github.com/decentralized-identity/did-resolver/commit/832ea58091175452ded0d03067aa12c4e5d0820e))
+
 ## [3.2.1](https://github.com/decentralized-identity/did-resolver/compare/3.2.0...3.2.1) (2022-06-05)
 
 
