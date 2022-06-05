@@ -1,3 +1,10 @@
+## [3.2.1](https://github.com/decentralized-identity/did-resolver/compare/3.2.0...3.2.1) (2022-06-05)
+
+
+### Bug Fixes
+
+* **ci:** groom the build scripts and dependencies ([#133](https://github.com/decentralized-identity/did-resolver/issues/133)) ([5c71b08](https://github.com/decentralized-identity/did-resolver/commit/5c71b08f5df42a619db87c14139eee0f3ecc5fb4))
+
 # [3.2.0](https://github.com/decentralized-identity/did-resolver/compare/3.1.5...3.2.0) (2022-03-29)
 
 
