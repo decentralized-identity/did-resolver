@@ -136,7 +136,7 @@ the method name to a `resolve(did: string, parsed: ParsedDID, didResolver: DIDRe
 function. e.g. `{ ethr: resolve }`.
 
 The resolve function should accept a did string, and an object of
-type [ParsedDID](https://github.com/decentralized-identity/did-resolver/blob/develop/src/resolver.ts#L51)
+type [ParsedDID](https://github.com/decentralized-identity/did-resolver/blob/master/src/resolver.ts#L112)
 
 ```js
 export function getResolver() {
