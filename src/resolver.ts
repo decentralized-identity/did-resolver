@@ -55,7 +55,7 @@ export type DIDDocument = {
   alsoKnownAs?: string[]
   controller?: string | string[]
   verificationMethod?: VerificationMethod[]
-  service?: ServiceEndpoint[]
+  service?: Service[]
   /**
    * @deprecated
    */
@@ -64,12 +64,14 @@ export type DIDDocument = {
   [x in KeyCapabilitySection]?: (string | VerificationMethod)[]
 }
 
-export interface ServiceEndpoint {
+export interface Service {
   id: string
   type: string
-  serviceEndpoint: string
-  description?: string
+  serviceEndpoint: ServiceEndpoint | ServiceEndpoint[]
+  [x: string]: any
 }
+
+export type ServiceEndpoint = string | Record<string, any>
 
 /**
  * Encapsulates a JSON web key type that includes only the public properties that
