@@ -1,3 +1,15 @@
+# [4.0.0](https://github.com/decentralized-identity/did-resolver/compare/3.2.2...4.0.0) (2022-08-02)
+
+
+### Bug Fixes
+
+* **types:** update Service interface to match latest DID spec ([#136](https://github.com/decentralized-identity/did-resolver/issues/136)) ([4ead68e](https://github.com/decentralized-identity/did-resolver/commit/4ead68e54dc2c41015ea5dda39b00fe2a2881190)), closes [#135](https://github.com/decentralized-identity/did-resolver/issues/135)
+
+
+### BREAKING CHANGES
+
+* **types:** the `ServiceEndpoint` type has been renamed to `Service` and a new type `ServiceEndpoint` was created to fit the [DID spec](https://www.w3.org/TR/did-core/#services)
+
 ## [3.2.2](https://github.com/decentralized-identity/did-resolver/compare/3.2.1...3.2.2) (2022-06-05)
 
 
