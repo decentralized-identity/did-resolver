@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Resolver, parse } from '../resolver'
+import { Resolver, parse, DIDResolutionResult } from '../resolver'
 
 describe('resolver', () => {
   describe('parse()', () => {
@@ -161,7 +161,7 @@ describe('resolver', () => {
     beforeAll(() => {
       mockmethod = jest.fn().mockReturnValue(mockReturn)
       resolver = new Resolver({
-        example: async (did: string) => ({
+        example: async (did: string): Promise<DIDResolutionResult> => ({
           didResolutionMetadata: { contentType: 'application/did+ld+json' },
           didDocument: {
             '@context': 'https://w3id.org/did/v1',
@@ -208,6 +208,114 @@ describe('resolver', () => {
               controller: '1234',
               type: 'xyz',
             },
+          ],
+        },
+        didDocumentMetadata: {},
+      })
+    })
+    
+    it('resolves did document with service', async () => {
+      const altResolver = new Resolver({
+        example: async (did: string): Promise<DIDResolutionResult> => ({
+          didResolutionMetadata: { contentType: 'application/did+ld+json' },
+          didDocument: {
+            '@context': 'https://w3id.org/did/v1',
+            id: did,
+            verificationMethod: [
+              {
+                id: 'owner',
+                controller: '1234',
+                type: 'xyz',
+              },
+            ],
+            service: [
+              {
+                id: `service-${did}`,
+                type: 'Service',
+                serviceEndpoint: 'https://example.com/',
+              }
+            ],
+          },
+          didDocumentMetadata: {},
+        }),
+        mock: mockmethod,
+      })
+
+      await expect(altResolver.resolve('did:example:123456789')).resolves.toEqual({
+        didResolutionMetadata: { contentType: 'application/did+ld+json' },
+        didDocument: {
+          '@context': 'https://w3id.org/did/v1',
+          id: 'did:example:123456789',
+          verificationMethod: [
+            {
+              id: 'owner',
+              controller: '1234',
+              type: 'xyz',
+            },
+          ],
+          service: [
+            {
+              id: 'service-did:example:123456789',
+              type: 'Service',
+              serviceEndpoint: 'https://example.com/',
+            }
+          ],
+        },
+        didDocumentMetadata: {},
+      })
+    })
+
+    it('resolves did document with expanded service', async () => {
+      const altResolver = new Resolver({
+        example: async (did: string): Promise<DIDResolutionResult> => ({
+          didResolutionMetadata: { contentType: 'application/did+ld+json' },
+          didDocument: {
+            '@context': 'https://w3id.org/did/v1',
+            id: did,
+            verificationMethod: [
+              {
+                id: 'owner',
+                controller: '1234',
+                type: 'xyz',
+              },
+            ],
+            service: [
+              {
+                id: `service-${did}`,
+                type: 'Service',
+                serviceEndpoint: {
+                  uri: 'yep',
+                  accept: ['xyz']
+                },
+              }
+            ],
+          },
+          didDocumentMetadata: {},
+        }),
+        mock: mockmethod,
+      })
+
+      await expect(altResolver.resolve('did:example:123456789')).resolves.toEqual({
+        didResolutionMetadata: { contentType: 'application/did+ld+json' },
+        didDocument: {
+          '@context': 'https://w3id.org/did/v1',
+          id: 'did:example:123456789',
+          verificationMethod: [
+            {
+              id: 'owner',
+              controller: '1234',
+              type: 'xyz',
+            },
+          ],
+          service: [
+            {
+              id: 'service-did:example:123456789',
+              type: 'Service',
+              serviceEndpoint: {
+                uri: 'yep',
+                accept: ['xyz']
+              },
+            }
           ],
         },
         didDocumentMetadata: {},
