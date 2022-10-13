@@ -18,7 +18,8 @@
   "exports": {
     ".": {
       "require": "./lib/resolver.cjs",
-      "import": "./lib/resolver.module.js"
+      "import": "./lib/resolver.module.js",
+      "types": "./lib/resolver.d.ts"
     }
   },
   "sideEffects": false,
