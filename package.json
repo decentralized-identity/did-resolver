@@ -6,9 +6,7 @@
   "source": "src/resolver.ts",
   "main": "./lib/resolver.cjs",
   "module": "./lib/resolver.module.js",
-  "unpkg": "./lib/resolver.umd.js",
   "types": "./lib/resolver.d.ts",
-  "umd:main": "./lib/resolver.umd.js",
   "files": [
     "lib",
     "dist",
@@ -17,6 +15,7 @@
   ],
   "exports": {
     ".": {
+      "types": "./lib/resolver.d.ts",
       "require": "./lib/resolver.cjs",
       "import": "./lib/resolver.module.js"
     }
