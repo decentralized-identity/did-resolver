@@ -1,3 +1,10 @@
+## [4.0.1](https://github.com/decentralized-identity/did-resolver/compare/4.0.0...4.0.1) (2022-10-17)
+
+
+### Bug Fixes
+
+* **build:** add types to exports ([#139](https://github.com/decentralized-identity/did-resolver/issues/139)) ([349e882](https://github.com/decentralized-identity/did-resolver/commit/349e882195b156c50e412b2258802aade3be3091)), closes [#138](https://github.com/decentralized-identity/did-resolver/issues/138) [#137](https://github.com/decentralized-identity/did-resolver/issues/137)
+
 # [4.0.0](https://github.com/decentralized-identity/did-resolver/compare/3.2.2...4.0.0) (2022-08-02)
 
 
