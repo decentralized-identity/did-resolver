@@ -213,7 +213,7 @@ describe('resolver', () => {
         didDocumentMetadata: {},
       })
     })
-    
+
     it('resolves did document with service', async () => {
       const altResolver = new Resolver({
         example: async (did: string): Promise<DIDResolutionResult> => ({
@@ -233,7 +233,7 @@ describe('resolver', () => {
                 id: `service-${did}`,
                 type: 'Service',
                 serviceEndpoint: 'https://example.com/',
-              }
+              },
             ],
           },
           didDocumentMetadata: {},
@@ -258,7 +258,7 @@ describe('resolver', () => {
               id: 'service-did:example:123456789',
               type: 'Service',
               serviceEndpoint: 'https://example.com/',
-            }
+            },
           ],
         },
         didDocumentMetadata: {},
@@ -285,9 +285,9 @@ describe('resolver', () => {
                 type: 'Service',
                 serviceEndpoint: {
                   uri: 'yep',
-                  accept: ['xyz']
+                  accept: ['xyz'],
                 },
-              }
+              },
             ],
           },
           didDocumentMetadata: {},
@@ -313,9 +313,9 @@ describe('resolver', () => {
               type: 'Service',
               serviceEndpoint: {
                 uri: 'yep',
-                accept: ['xyz']
+                accept: ['xyz'],
               },
-            }
+            },
           ],
         },
         didDocumentMetadata: {},
