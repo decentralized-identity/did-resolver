@@ -165,6 +165,7 @@ export interface VerificationMethod {
   publicKeyMultibase?: string
   blockchainAccountId?: string
   ethereumAddress?: string
+  conditionWeightedThreshold?: any[]
 }
 
 /**
