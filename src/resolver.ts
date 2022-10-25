@@ -165,7 +165,19 @@ export interface VerificationMethod {
   publicKeyMultibase?: string
   blockchainAccountId?: string
   ethereumAddress?: string
-  conditionWeightedThreshold?: any[]
+  conditionWeightedThreshold?: ConditionWeightedThreshold[]
+  threshold?: number
+  // TODO add other properties of VerifiableConditions: threshold, conditionThreshold, conditionAnd, conditionOr
+}
+
+interface ConditionWeightedThreshold {
+  condition: {
+    id: string
+    controller: string
+    type: string
+    publicKeyJwk: JsonWebKey
+  }
+  weight: number
 }
 
 /**
