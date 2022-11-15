@@ -154,7 +154,7 @@ export interface JsonWebKey extends Extensible {
  * @see {@link https://www.w3.org/TR/did-core/#verification-methods}
  * @see {@link https://www.w3.org/TR/did-core/#verification-method-properties}
  */
- export interface VerificationMethod {
+export interface VerificationMethod {
   id: string
   type: string
   controller: string
