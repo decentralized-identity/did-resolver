@@ -170,7 +170,7 @@ export interface VerificationMethod {
   // TODO add other properties of VerifiableConditions: threshold, conditionThreshold, conditionAnd, conditionOr
 }
 
-interface ConditionWeightedThreshold {
+export interface ConditionWeightedThreshold {
   condition: {
     id: string
     controller: string
@@ -179,7 +179,6 @@ interface ConditionWeightedThreshold {
   }
   weight: number
 }
-
 /**
  * URI params resulting from parsing a DID URI
  */
