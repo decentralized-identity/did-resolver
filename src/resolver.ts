@@ -145,6 +145,7 @@ export interface JsonWebKey extends Extensible {
   y?: string
 }
 
+
 /**
  * Represents the properties of a Verification Method listed in a DID document.
  *
@@ -165,20 +166,24 @@ export interface VerificationMethod {
   publicKeyMultibase?: string
   blockchainAccountId?: string
   ethereumAddress?: string
-  conditionWeightedThreshold?: ConditionWeightedThreshold[]
+
+  // ConditionalProof2022 subtypes
+  conditionOr: VerificationMethod[]
+  conditionAnd: VerificationMethod[]
   threshold?: number
-  // TODO add other properties of VerifiableConditions: threshold, conditionThreshold, conditionAnd, conditionOr
+  conditionThreshold: VerificationMethod[]
+  conditionWeightedThreshold?: ConditionWeightedThreshold[]
+  conditionDelegated?: string
+  relationshipParent: string[]
+  relationshipChild: string[]
+  relationshipSibling: string[]
 }
 
 export interface ConditionWeightedThreshold {
-  condition: {
-    id: string
-    controller: string
-    type: string
-    publicKeyJwk: JsonWebKey
-  }
+  condition: VerificationMethod
   weight: number
 }
+
 /**
  * URI params resulting from parsing a DID URI
  */
