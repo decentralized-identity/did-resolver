@@ -9,7 +9,7 @@
   "types": "./lib/resolver.d.ts",
   "publishConfig": {
     "access": "public"
-  }
+  },
   "files": [
     "lib",
     "dist",
