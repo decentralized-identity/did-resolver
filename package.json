@@ -1,5 +1,5 @@
 {
-  "name": "tonomy-did-resolver",
+  "name": "@tonomy-foundation/did-resolver",
   "version": "4.1.0",
   "description": "Resolve DID documents",
   "type": "module",
