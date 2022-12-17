@@ -1,6 +1,6 @@
 {
   "name": "@tonomy-foundation/did-resolver",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "Resolve DID documents",
   "type": "module",
   "source": "src/resolver.ts",
