@@ -30,7 +30,9 @@
   },
   "author": "Pelle Braendgaard",
   "contributors": [
-    "Mircea Nistor <mircea.nistor@mesh.xyz>"
+    "Mircea Nistor <mircea.nistor@mesh.xyz>",
+    "Jack Tanner <Jack@tonomy.foundation>",
+    "Rebal alhaqash <Rebal@tonomy.foundation>"
   ],
   "license": "Apache-2.0",
   "scripts": {
