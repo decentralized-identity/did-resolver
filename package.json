@@ -1,5 +1,5 @@
 {
-  "name": "did-resolver",
+  "name": "@tonomy/did-resolver",
   "version": "4.0.1",
   "description": "Resolve DID documents",
   "type": "module",
@@ -7,6 +7,9 @@
   "main": "./lib/resolver.cjs",
   "module": "./lib/resolver.module.js",
   "types": "./lib/resolver.d.ts",
+  "publishConfig": {
+	  "access": "public"
+  },
   "files": [
     "lib",
     "dist",
