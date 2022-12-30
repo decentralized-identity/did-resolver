@@ -145,7 +145,6 @@ export interface JsonWebKey extends Extensible {
   y?: string
 }
 
-
 /**
  * Represents the properties of a Verification Method listed in a DID document.
  *
