@@ -29,7 +29,7 @@ Each method resolver should expose a function called `getResolver` which will re
 key/value pairs. Then you can flatten them into one object to pass into the `Resolver` constructor.
 
 ```js
-import { Resolver } from '@tonomy/did-resolver'
+import { Resolver } from 'did-resolver'
 import ethr from 'ethr-did-resolver'
 import web from 'web-did-resolver'
 import sov from 'sov-did-resolver'
@@ -53,7 +53,7 @@ const resolver = new Resolver(ethrResolver)
 DID Method resolvers created before version `3.0.0` of this library can be used as legacy resolvers.
 
 ```js
-import { Resolver } from '@tonomy/did-resolver'
+import { Resolver } from 'did-resolver'
 import web from 'web-did-resolver'
 import sov from 'sov-did-resolver'
 
@@ -167,7 +167,7 @@ The MyMethod `getResolver()` result could then be passed into the DIDResolver co
 flattened if used with other methods as well.
 
 ```js
-import { DIDResolver } from '@tonomy/did-resolver'
+import { DIDResolver } from 'did-resolver'
 import MyMethod from 'mymethod-did-resolver'
 
 const myResolver = MyMethod.getResolver()
