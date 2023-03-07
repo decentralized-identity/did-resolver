@@ -8,8 +8,7 @@
   "module": "./lib/resolver.module.js",
   "types": "./lib/resolver.d.ts",
   "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
+    "access": "public"
   },
   "files": [
     "lib",
