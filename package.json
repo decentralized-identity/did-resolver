@@ -1,6 +1,6 @@
 {
-  "name": "@tonomy-foundation/did-resolver",
-  "version": "4.1.3",
+  "name": "@tonomy/did-resolver",
+  "version": "4.0.4",
   "description": "Resolve DID documents",
   "type": "module",
   "source": "src/resolver.ts",
@@ -32,7 +32,7 @@
   "author": "Pelle Braendgaard",
   "contributors": [
     "Mircea Nistor <mircea.nistor@mesh.xyz>",
-    "Jack Tanner <jack@tonomy.foundation>",
+    "Jack Tanner <jack+public@tonomy.foundation>",
     "Rebal Alhaqash <rebal@tonomy.foundation>"
   ],
   "license": "Apache-2.0",
