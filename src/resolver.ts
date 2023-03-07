@@ -167,15 +167,15 @@ export interface VerificationMethod {
   ethereumAddress?: string
 
   // ConditionalProof2022 subtypes
-  conditionOr: VerificationMethod[]
-  conditionAnd: VerificationMethod[]
+  conditionOr?: VerificationMethod[]
+  conditionAnd?: VerificationMethod[]
   threshold?: number
-  conditionThreshold: VerificationMethod[]
+  conditionThreshold?: VerificationMethod[]
   conditionWeightedThreshold?: ConditionWeightedThreshold[]
   conditionDelegated?: string
-  relationshipParent: string[]
-  relationshipChild: string[]
-  relationshipSibling: string[]
+  relationshipParent?: string[]
+  relationshipChild?: string[]
+  relationshipSibling?: string[]
 }
 
 export interface ConditionWeightedThreshold {
