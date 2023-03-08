@@ -165,6 +165,22 @@ export interface VerificationMethod {
   publicKeyMultibase?: string
   blockchainAccountId?: string
   ethereumAddress?: string
+
+  // ConditionalProof2022 subtypes
+  conditionOr?: VerificationMethod[]
+  conditionAnd?: VerificationMethod[]
+  threshold?: number
+  conditionThreshold?: VerificationMethod[]
+  conditionWeightedThreshold?: ConditionWeightedThreshold[]
+  conditionDelegated?: string
+  relationshipParent?: string[]
+  relationshipChild?: string[]
+  relationshipSibling?: string[]
+}
+
+export interface ConditionWeightedThreshold {
+  condition: VerificationMethod
+  weight: number
 }
 
 /**
