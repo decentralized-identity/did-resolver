@@ -1,3 +1,10 @@
+# [4.1.0](https://github.com/decentralized-identity/did-resolver/compare/4.0.1...4.1.0) (2023-03-08)
+
+
+### Features
+
+* add type definitions for ConditionalProof2022 ([#143](https://github.com/decentralized-identity/did-resolver/issues/143)) ([c4f62d3](https://github.com/decentralized-identity/did-resolver/commit/c4f62d3ef5209bdec509f456601563e7eeb56c7a))
+
 ## [4.0.1](https://github.com/decentralized-identity/did-resolver/compare/4.0.0...4.0.1) (2022-10-17)
 
 
