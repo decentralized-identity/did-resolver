@@ -19,13 +19,18 @@
 export type Extensible = Record<string, any>
 
 /**
+ * Defines a JSON-LD context entry.
+ */
+export type ContextEntry = (string & {}) | Extensible
+
+/**
  * Defines the result of a DID resolution operation.
  *
  * @see {@link Resolvable.resolve}
  * @see {@link https://www.w3.org/TR/did-core/#did-resolution}
  */
 export interface DIDResolutionResult {
-  '@context'?: 'https://w3id.org/did-resolution/v1' | string | string[]
+  '@context'?: 'https://w3id.org/did-resolution/v1' | ContextEntry | ContextEntry[]
   didResolutionMetadata: DIDResolutionMetadata
   didDocument: DIDDocument | null
   didDocumentMetadata: DIDDocumentMetadata
@@ -47,7 +52,7 @@ export interface DIDResolutionOptions extends Extensible {
  */
 export interface DIDResolutionMetadata extends Extensible {
   contentType?: string
-  error?: 'invalidDid' | 'notFound' | 'representationNotSupported' | 'unsupportedDidMethod' | string
+  error?: 'invalidDid' | 'notFound' | 'representationNotSupported' | 'unsupportedDidMethod' | (string & {})
 }
 
 /**
@@ -62,7 +67,7 @@ export interface DIDDocumentMetadata extends Extensible {
   versionId?: string
   nextUpdate?: string
   nextVersionId?: string
-  equivalentId?: string
+  equivalentId?: string | string[]
   canonicalId?: string
 }
 
@@ -84,7 +89,7 @@ export type KeyCapabilitySection =
  * @see {@link https://www.w3.org/TR/did-core/#did-document-properties}
  */
 export type DIDDocument = {
-  '@context'?: 'https://www.w3.org/ns/did/v1' | string | string[]
+  '@context'?: 'https://www.w3.org/ns/did/v1' | ContextEntry | ContextEntry[]
   id: string
   alsoKnownAs?: string[]
   controller?: string | string[]
@@ -158,12 +163,28 @@ export interface VerificationMethod {
   id: string
   type: string
   controller: string
-  publicKeyBase58?: string
-  publicKeyBase64?: string
   publicKeyJwk?: JsonWebKey
-  publicKeyHex?: string
   publicKeyMultibase?: string
   blockchainAccountId?: string
+  /**
+   * @deprecated
+   */
+  publicKeyBase58?: string
+  /**
+   * @deprecated
+   */
+  publicKeyBase64?: string
+  /**
+   * @deprecated
+   */
+  publicKeyHex?: string
+  /**
+   * @deprecated
+   */
+  publicKeyPem?: string
+  /**
+   * @deprecated
+   */
   ethereumAddress?: string
 
   // ConditionalProof2022 subtypes
