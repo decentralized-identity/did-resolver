@@ -2,9 +2,9 @@
   "tagFormat": "${version}",
   "branches": [
     "master",
-    { "name": "feat/*", "channel": "preview", "prerelease": true },
-    { "name": "fix/*", "channel": "preview", "prerelease": true },
-    { "name": "chore/*", "channel": "preview", "prerelease": true }
+    { "name": "feat/*", "channel": "preview", "prerelease": "${name.replace(/^feat\\//g, 'feat-')}" },
+    { "name": "fix/*", "channel": "preview", "prerelease": "${name.replace(/^fix\\//g, 'fix-')}" },
+    { "name": "chore/*", "channel": "preview", "prerelease": "${name.replace(/^chore\\//g, 'chore-')}" }
   ],
   "plugins": [
     "@semantic-release/commit-analyzer",
