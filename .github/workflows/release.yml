@@ -25,10 +25,10 @@ jobs:
           node-version: 24
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm run format
       - run: pnpm run build
       - run: pnpm run lint
       - run: pnpm run test:ci
-      - run: pnpm run format
 
       - name: Setup git coordinates
         run: |
