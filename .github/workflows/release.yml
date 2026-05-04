@@ -1,35 +1,42 @@
-name: Build, Test and Publish
+name: Release
 on:
   workflow_dispatch:
   push:
     branches:
       - 'master'
 jobs:
-  build-test-publish:
+  release:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
-          token: ${{ secrets.GH_TOKEN }}
-
-      - name: "Setup node with cache"
-        uses: actions/setup-node@v6
+          persist-credentials: false
+      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
+        with:
+          version: 10
+      - name: 'Setup Node.js with pnpm cache'
+        uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: 24
-          cache: 'yarn'
 
-      - run: yarn install --frozen-lockfile
-      - run: yarn run build
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run format
+      - run: pnpm run build
+      - run: pnpm run lint
+      - run: pnpm run test:ci
 
-      - name: "Setup git coordinates"
+      - name: Setup git coordinates
         run: |
           git config user.name uport-automation-bot
-          git config user.email devops@uport.me
+          git config user.email devops@veramo.io
 
-      - name: "Run semantic-release"
+      - name: Run semantic-release
         env:
-          GH_TOKEN: ${{secrets.GH_TOKEN}}
-          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-        if: github.ref == 'refs/heads/master'
-        run: yarn run release
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm run release

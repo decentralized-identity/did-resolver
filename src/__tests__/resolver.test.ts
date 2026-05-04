@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { vi, describe, it, expect, beforeAll } from 'vitest'
 import { Resolver, parse, DIDResolutionResult } from '../resolver'
 
 describe('resolver', () => {
@@ -159,7 +160,7 @@ describe('resolver', () => {
       didDocumentMetadata: {},
     })
     beforeAll(() => {
-      mockmethod = jest.fn().mockReturnValue(mockReturn)
+      mockmethod = vi.fn().mockReturnValue(mockReturn)
       resolver = new Resolver({
         example: async (did: string): Promise<DIDResolutionResult> => ({
           didResolutionMetadata: { contentType: 'application/did+ld+json' },
@@ -360,7 +361,7 @@ describe('resolver', () => {
     })
 
     it('throws on null document', async () => {
-      mockmethod = jest.fn().mockReturnValue(
+      mockmethod = vi.fn().mockReturnValue(
         Promise.resolve({
           didResolutionMetadata: { error: 'notFound' },
           didDocument: null,
@@ -381,7 +382,7 @@ describe('resolver', () => {
     describe('caching', () => {
       describe('default', () => {
         it('should not cache', async () => {
-          mockmethod = jest.fn().mockReturnValue(mockReturn)
+          mockmethod = vi.fn().mockReturnValue(mockReturn)
           resolver = new Resolver({
             mock: mockmethod,
           })
@@ -421,7 +422,7 @@ describe('resolver', () => {
 
     describe('cache=true', () => {
       it('should cache', async () => {
-        mockmethod = jest.fn().mockReturnValue(mockReturn)
+        mockmethod = vi.fn().mockReturnValue(mockReturn)
         resolver = new Resolver(
           {
             mock: mockmethod,
@@ -461,7 +462,7 @@ describe('resolver', () => {
       })
 
       it('should respect no-cache', async () => {
-        mockmethod = jest.fn().mockReturnValue(mockReturn)
+        mockmethod = vi.fn().mockReturnValue(mockReturn)
         resolver = new Resolver(
           {
             mock: mockmethod,
@@ -501,7 +502,7 @@ describe('resolver', () => {
       })
 
       it('should not cache with different params', async () => {
-        mockmethod = jest.fn().mockReturnValue(mockReturn)
+        mockmethod = vi.fn().mockReturnValue(mockReturn)
         resolver = new Resolver(
           {
             mock: mockmethod,
@@ -541,7 +542,7 @@ describe('resolver', () => {
       })
 
       it('should not cache null docs', async () => {
-        mockmethod = jest.fn().mockReturnValue(
+        mockmethod = vi.fn().mockReturnValue(
           Promise.resolve({
             didResolutionMetadata: { error: 'notFound' },
             didDocument: null,
