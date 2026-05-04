@@ -1,3 +1,10 @@
+## [5.0.1](https://github.com/decentralized-identity/did-resolver/compare/5.0.0...5.0.1) (2026-05-04)
+
+
+### Bug Fixes
+
+* **types:** refine `@context` and verification method types for improved extensibility ([#156](https://github.com/decentralized-identity/did-resolver/issues/156)) ([2ad4c48](https://github.com/decentralized-identity/did-resolver/commit/2ad4c48d23e5c4abd855bc8e826f41f279a121a7))
+
 # [5.0.0](https://github.com/decentralized-identity/did-resolver/compare/4.1.0...5.0.0) (2026-05-04)
 
 
