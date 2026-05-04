@@ -1,3 +1,13 @@
+# [5.0.0](https://github.com/decentralized-identity/did-resolver/compare/4.1.0...5.0.0) (2026-05-04)
+
+
+* Publishing maintenance (#155) ([86f81fe](https://github.com/decentralized-identity/did-resolver/commit/86f81fe3f63cb9cf2316863b27047b4e1440a7be)), closes [#155](https://github.com/decentralized-identity/did-resolver/issues/155)
+
+
+### BREAKING CHANGES
+
+* the package.json exports is changing and this usually counts as a breaking change. Raising the compile target from ES2018 to ES2020 changes the runtime syntax, also counts as breaking.
+
 # [5.0.0-feat-publishing-maintenance.1](https://github.com/decentralized-identity/did-resolver/compare/4.1.0...5.0.0-feat-publishing-maintenance.1) (2026-05-04)
 
 
