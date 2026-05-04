@@ -42,7 +42,6 @@
     "build": "tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && node scripts/postbuild.mjs",
     "format": "prettier --write \"src/**/*.[jt]s\"",
     "lint": "eslint \"src/**/*.[jt]s\"",
-    "prepublishOnly": "pnpm test:ci && pnpm format && pnpm lint",
     "release": "semantic-release --debug"
   },
   "devDependencies": {

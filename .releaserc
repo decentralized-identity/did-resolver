@@ -1,5 +1,11 @@
 {
   "tagFormat": "${version}",
+  "branches": [
+    "master",
+    { "name": "feat/*", "channel": "preview", "prerelease": true },
+    { "name": "fix/*", "channel": "preview", "prerelease": true },
+    { "name": "chore/*", "channel": "preview", "prerelease": true }
+  ],
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
@@ -8,10 +14,9 @@
     }],
     "@semantic-release/npm",
     ["@semantic-release/git", {
-      "assets": ["CHANGELOG.md", "docs", "package.json", "yarn.lock"],
+      "assets": ["CHANGELOG.md", "docs", "package.json", "pnpm-lock.yaml"],
       "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
     }],
     "@semantic-release/github"
-  ],
-  "branch": "master"
+  ]
 }
