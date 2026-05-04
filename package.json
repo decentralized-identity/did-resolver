@@ -6,6 +6,7 @@
   "main": "./lib/resolver.cjs",
   "module": "./lib/resolver.mjs",
   "types": "./lib/resolver.d.ts",
+  "type": "commonjs",
   "files": [
     "lib",
     "src",
