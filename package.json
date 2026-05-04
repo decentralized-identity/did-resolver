@@ -9,7 +9,6 @@
   "type": "commonjs",
   "files": [
     "lib",
-    "src",
     "LICENSE"
   ],
   "exports": {
