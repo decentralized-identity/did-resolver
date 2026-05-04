@@ -345,10 +345,7 @@ export class Resolver implements Resolvable {
     if (options.legacyResolvers) {
       Object.keys(options.legacyResolvers).map((methodName) => {
         if (!this.registry[methodName]) {
-          this.registry[methodName] = wrapLegacyResolver(
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            options.legacyResolvers![methodName]
-          )
+          this.registry[methodName] = wrapLegacyResolver(options.legacyResolvers![methodName])
         }
       })
     }
