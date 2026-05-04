@@ -1,6 +1,6 @@
 {
   "name": "did-resolver",
-  "version": "4.1.0",
+  "version": "5.0.0-feat-publishing-maintenance.1",
   "description": "Resolve DID documents",
   "source": "src/resolver.ts",
   "main": "./lib/resolver.cjs",

@@ -1,3 +1,15 @@
+# [5.0.0-feat-publishing-maintenance.1](https://github.com/decentralized-identity/did-resolver/compare/4.1.0...5.0.0-feat-publishing-maintenance.1) (2026-05-04)
+
+
+### chore
+
+* **build:** migrate to ESM/CJS dual build, update tooling and configs ([c8dbade](https://github.com/decentralized-identity/did-resolver/commit/c8dbade93925ac606204279d3c923aecf081a17a))
+
+
+### BREAKING CHANGES
+
+* **build:** this change updates the exports so it is marked as breaking
+
 # [4.1.0](https://github.com/decentralized-identity/did-resolver/compare/4.0.1...4.1.0) (2023-03-08)
 
 
