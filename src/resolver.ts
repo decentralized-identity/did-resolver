@@ -77,11 +77,7 @@ export interface DIDDocumentMetadata extends Extensible {
  * @see {@link https://www.w3.org/TR/did-core/#verification-relationships}
  */
 export type KeyCapabilitySection =
-  | 'authentication'
-  | 'assertionMethod'
-  | 'keyAgreement'
-  | 'capabilityInvocation'
-  | 'capabilityDelegation'
+  'authentication' | 'assertionMethod' | 'keyAgreement' | 'capabilityInvocation' | 'capabilityDelegation'
 
 /**
  * Represents a DID document.
@@ -317,6 +313,58 @@ export function parse(didUrl: string): ParsedDID | null {
   return null
 }
 
+// RFC 3986 ABNF components (referenced by DID Core v1.0 §3.2)
+const STRICT_HEXDIG = '[0-9a-fA-F]' // allows both lowercase and uppercase
+const STRICT_PCT_ENCODED = `(?:%${STRICT_HEXDIG}{2})` // pct-encoded = "%" HEXDIG HEXDIG
+
+// DID Core v1.0 §3.1
+const STRICT_ID_CHAR = `(?:[a-zA-Z0-9._-]|${STRICT_PCT_ENCODED})` // idchar
+const STRICT_METHOD = '[a-z0-9]+' // method-name = 1*(%x61-7A / DIGIT)
+const STRICT_METHOD_ID = `(?:${STRICT_ID_CHAR}*:)*${STRICT_ID_CHAR}+` // method-specific-id
+
+// DID Core v1.0 §3.2 tail via RFC 3986 §3.3
+const STRICT_UNRESERVED = '[a-zA-Z0-9._~-]'
+const STRICT_SUB_DELIMS = "[!$&'()*+,;=]"
+const STRICT_PCHAR = `(?:${STRICT_UNRESERVED}|${STRICT_PCT_ENCODED}|${STRICT_SUB_DELIMS}|[:@])` // pchar
+const STRICT_PATH_ABEMPTY = `(?:/${STRICT_PCHAR}*)*` // path-abempty
+const STRICT_QUERY_CHARS = `(?:${STRICT_PCHAR}|[/?])*` // query
+const STRICT_FRAGMENT_CHARS = `(?:${STRICT_PCHAR}|[/?])*` // fragment
+
+const DID_URL_MATCHER = new RegExp(
+  `^did:(${STRICT_METHOD}):(${STRICT_METHOD_ID})(${STRICT_PATH_ABEMPTY})(?:\\?(${STRICT_QUERY_CHARS}))?(?:#(${STRICT_FRAGMENT_CHARS}))?$`
+)
+
+/**
+ * Parses a DID URL strictly according to the DID Core v1.1 specification ABNF
+ * (§3.1 DID Syntax, §3.2 DID URL Syntax). Unlike {@link parse}, this method
+ * does not accept legacy DID parameters (`;key=value`) and enforces the
+ * RFC 3986 character sets for path, query, and fragment components.
+ *
+ * @param didUrl - the DID URL string to be parsed
+ * @returns a ParsedDID object, or null if the input does not conform to the spec
+ */
+export function parseStrict(didUrl: string): ParsedDID | null {
+  if (!didUrl) return null
+  const m = didUrl.match(DID_URL_MATCHER)
+  if (!m) return null
+
+  const parsed: ParsedDID = {
+    did: `did:${m[1]}:${m[2]}`,
+    method: m[1],
+    id: m[2],
+    didUrl,
+  }
+  // path-abempty always matches (possibly empty); only attach a real path.
+  if (m[3]) parsed.path = m[3]
+  // query/fragment groups are `undefined` when absent, `''` when present but empty
+  // (`did:x:y?` / `did:x:y#`), preserve the distinction.
+  if (m[4] !== undefined) parsed.query = m[4]
+  if (m[5] !== undefined) parsed.fragment = m[5]
+  // params are intentionally omitted (matrix parameters not in DID Core v1.1 spec)
+
+  return parsed
+}
+
 const EMPTY_RESULT: DIDResolutionResult = {
   didResolutionMetadata: {},
   didDocument: null,
@@ -374,6 +422,24 @@ export class Resolver implements Resolvable {
 
   async resolve(didUrl: string, options: DIDResolutionOptions = {}): Promise<DIDResolutionResult> {
     const parsed = parse(didUrl)
+    if (parsed === null) {
+      return {
+        ...EMPTY_RESULT,
+        didResolutionMetadata: { error: 'invalidDid' },
+      }
+    }
+    const resolver = this.registry[parsed.method]
+    if (!resolver) {
+      return {
+        ...EMPTY_RESULT,
+        didResolutionMetadata: { error: 'unsupportedDidMethod' },
+      }
+    }
+    return this.cache(parsed, () => resolver(parsed.did, parsed, this, options))
+  }
+
+  async resolveStrict(didUrl: string, options: DIDResolutionOptions = {}): Promise<DIDResolutionResult> {
+    const parsed = parseStrict(didUrl)
     if (parsed === null) {
       return {
         ...EMPTY_RESULT,

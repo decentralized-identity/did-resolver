@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import { vi, describe, it, expect, beforeAll } from 'vitest'
-import { Resolver, parse, DIDResolutionResult } from '../resolver'
+import { Resolver, parse, parseStrict, DIDResolutionResult } from '../resolver'
 
 describe('resolver', () => {
   describe('parse()', () => {
@@ -138,6 +138,167 @@ describe('resolver', () => {
       expect(parse('did:method:%1233%Ay')).toEqual(null)
       expect(parse('did:CAP:id')).toEqual(null)
       expect(parse('did:method:id::anotherid%r9')).toEqual(null)
+    })
+  })
+
+  describe('parseStrict()', () => {
+    it('returns parts', () => {
+      expect(parseStrict('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX')).toEqual({
+        method: 'uport',
+        id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
+        did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
+        didUrl: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
+      })
+      expect(parseStrict('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path')).toEqual({
+        method: 'uport',
+        id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
+        did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
+        didUrl: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path',
+        path: '/some/path',
+      })
+      expect(parseStrict('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX#fragment=123')).toEqual({
+        method: 'uport',
+        id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
+        did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
+        didUrl: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX#fragment=123',
+        fragment: 'fragment=123',
+      })
+      expect(parseStrict('did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123')).toEqual({
+        method: 'uport',
+        id: '2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
+        did: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX',
+        didUrl: 'did:uport:2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX/some/path#fragment=123',
+        path: '/some/path',
+        fragment: 'fragment=123',
+      })
+      expect(parseStrict('did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI')).toEqual({
+        method: 'nacl',
+        id: 'Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI',
+        did: 'did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI',
+        didUrl: 'did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI',
+      })
+      expect(parseStrict('did:web:example.com%3A8443')).toEqual({
+        method: 'web',
+        id: 'example.com%3A8443',
+        didUrl: 'did:web:example.com%3A8443',
+        did: 'did:web:example.com%3A8443',
+      })
+      expect(parseStrict('did:web:example.com:path:some%2Bsubpath')).toEqual({
+        method: 'web',
+        id: 'example.com:path:some%2Bsubpath',
+        didUrl: 'did:web:example.com:path:some%2Bsubpath',
+        did: 'did:web:example.com:path:some%2Bsubpath',
+      })
+      expect(parseStrict('did:123:test::test2')).toEqual({
+        method: '123',
+        id: 'test::test2',
+        didUrl: 'did:123:test::test2',
+        did: 'did:123:test::test2',
+      })
+      expect(parseStrict('did:method:%12%AF')).toEqual({
+        method: 'method',
+        id: '%12%AF',
+        didUrl: 'did:method:%12%AF',
+        did: 'did:method:%12%AF',
+      })
+    })
+
+    it('returns null if non compliant', () => {
+      expect(parseStrict('')).toEqual(null)
+      expect(parseStrict('did:')).toEqual(null)
+      expect(parseStrict('did:uport')).toEqual(null)
+      expect(parseStrict('did:uport:')).toEqual(null)
+      expect(parseStrict('did:uport:1234_12313***')).toEqual(null)
+      expect(parseStrict('2nQtiQG6Cgm1GYTBaaKAgr76uY7iSexUkqX')).toEqual(null)
+      expect(parseStrict('did:method:%12%1')).toEqual(null)
+      expect(parseStrict('did:method:%1233%Ay')).toEqual(null)
+      expect(parseStrict('did:CAP:id')).toEqual(null)
+      expect(parseStrict('did:method:id::anotherid%r9')).toEqual(null)
+    })
+
+    it('handles query and fragment correctly', () => {
+      expect(parseStrict('did:x:y?key=value')).toEqual({
+        method: 'x',
+        id: 'y',
+        did: 'did:x:y',
+        didUrl: 'did:x:y?key=value',
+        query: 'key=value',
+      })
+      expect(parseStrict('did:x:y?')).toEqual({
+        method: 'x',
+        id: 'y',
+        did: 'did:x:y',
+        didUrl: 'did:x:y?',
+        query: '',
+      })
+      expect(parseStrict('did:x:y#')).toEqual({
+        method: 'x',
+        id: 'y',
+        did: 'did:x:y',
+        didUrl: 'did:x:y#',
+        fragment: '',
+      })
+      expect(parseStrict('did:x:y?query#fragment')).toEqual({
+        method: 'x',
+        id: 'y',
+        did: 'did:x:y',
+        didUrl: 'did:x:y?query#fragment',
+        query: 'query',
+        fragment: 'fragment',
+      })
+    })
+
+    it('supports RFC 3986 path characters', () => {
+      expect(parseStrict('did:x:y/path~with-tilde')).toEqual({
+        method: 'x',
+        id: 'y',
+        path: '/path~with-tilde',
+        did: 'did:x:y',
+        didUrl: 'did:x:y/path~with-tilde',
+      })
+      expect(parseStrict('did:x:y/path!$&()*+,;=')).toEqual({
+        method: 'x',
+        id: 'y',
+        path: '/path!$&()*+,;=',
+        did: 'did:x:y',
+        didUrl: 'did:x:y/path!$&()*+,;=',
+      })
+      expect(parseStrict('did:x:y//double/slash')).toEqual({
+        method: 'x',
+        id: 'y',
+        path: '//double/slash',
+        did: 'did:x:y',
+        didUrl: 'did:x:y//double/slash',
+      })
+    })
+
+    it('supports lowercase hex in percent-encoding', () => {
+      expect(parseStrict('did:x:y%3a')).toEqual({
+        method: 'x',
+        id: 'y%3a',
+        did: 'did:x:y%3a',
+        didUrl: 'did:x:y%3a',
+      })
+      expect(parseStrict('did:x:y%2f%3apath')).toEqual({
+        method: 'x',
+        id: 'y%2f%3apath',
+        did: 'did:x:y%2f%3apath',
+        didUrl: 'did:x:y%2f%3apath',
+      })
+    })
+
+    it('allows empty idchar segments', () => {
+      expect(parseStrict('did:example:id::with::empty::segments')).toEqual({
+        method: 'example',
+        id: 'id::with::empty::segments',
+        did: 'did:example:id::with::empty::segments',
+        didUrl: 'did:example:id::with::empty::segments',
+      })
+    })
+
+    it('rejects matrix parameters', () => {
+      expect(parseStrict('did:example:id;param=value')).toEqual(null)
+      expect(parseStrict('did:example:id;param=value/path')).toEqual(null)
     })
   })
 
