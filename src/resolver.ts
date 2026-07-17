@@ -223,7 +223,6 @@ export interface ParsedDID {
   path?: string
   fragment?: string
   query?: string
-  params?: Params
 }
 
 /**
@@ -269,73 +268,29 @@ export function noCache(parsed: ParsedDID, resolve: WrappedResolver): Promise<DI
   return resolve()
 }
 
-const PCT_ENCODED = '(?:%[0-9a-fA-F]{2})'
-const ID_CHAR = `(?:[a-zA-Z0-9._-]|${PCT_ENCODED})`
-const METHOD = '([a-z0-9]+)'
-const METHOD_ID = `((?:${ID_CHAR}*:)*(${ID_CHAR}+))`
-const PARAM_CHAR = '[a-zA-Z0-9_.:%-]'
-const PARAM = `;${PARAM_CHAR}+=${PARAM_CHAR}*`
-const PARAMS = `((${PARAM})*)`
-const PATH = `(/[^#?]*)?`
-const QUERY = `([?][^#]*)?`
-const FRAGMENT = `(#.*)?`
-const DID_MATCHER = new RegExp(`^did:${METHOD}:${METHOD_ID}${PARAMS}${PATH}${QUERY}${FRAGMENT}$`)
-
-/**
- * Parses a DID URL and builds a {@link ParsedDID | ParsedDID object}
- *
- * @param didUrl - the DID URL string to be parsed
- * @returns a ParsedDID object, or null if the input is not a DID URL
- */
-export function parse(didUrl: string): ParsedDID | null {
-  if (didUrl === '' || !didUrl) return null
-  const sections = didUrl.match(DID_MATCHER)
-  if (sections) {
-    const parts: ParsedDID = {
-      did: `did:${sections[1]}:${sections[2]}`,
-      method: sections[1],
-      id: sections[2],
-      didUrl,
-    }
-    if (sections[4]) {
-      const params = sections[4].slice(1).split(';')
-      parts.params = {}
-      for (const p of params) {
-        const kv = p.split('=')
-        parts.params[kv[0]] = kv[1]
-      }
-    }
-    if (sections[6]) parts.path = sections[6]
-    if (sections[7]) parts.query = sections[7].slice(1)
-    if (sections[8]) parts.fragment = sections[8].slice(1)
-    return parts
-  }
-  return null
-}
-
 // RFC 3986 ABNF components (referenced by DID Core v1.0 §3.2)
-const STRICT_HEXDIG = '[0-9a-fA-F]' // allows both lowercase and uppercase
-const STRICT_PCT_ENCODED = `(?:%${STRICT_HEXDIG}{2})` // pct-encoded = "%" HEXDIG HEXDIG
+const HEXDIG = '[0-9a-fA-F]' // allows both lowercase and uppercase
+const PCT_ENCODED = `(?:%${HEXDIG}{2})` // pct-encoded = "%" HEXDIG HEXDIG
 
 // DID Core v1.0 §3.1
-const STRICT_ID_CHAR = `(?:[a-zA-Z0-9._-]|${STRICT_PCT_ENCODED})` // idchar
-const STRICT_METHOD = '[a-z0-9]+' // method-name = 1*(%x61-7A / DIGIT)
-const STRICT_METHOD_ID = `(?:${STRICT_ID_CHAR}*:)*${STRICT_ID_CHAR}+` // method-specific-id
+const ID_CHAR = `(?:[a-zA-Z0-9._-]|${PCT_ENCODED})` // idchar
+const METHOD = '[a-z0-9]+' // method-name = 1*(%x61-7A / DIGIT)
+const METHOD_ID = `(?:${ID_CHAR}*:)*${ID_CHAR}+` // method-specific-id
 
 // DID Core v1.0 §3.2 tail via RFC 3986 §3.3
-const STRICT_UNRESERVED = '[a-zA-Z0-9._~-]'
-const STRICT_SUB_DELIMS = "[!$&'()*+,;=]"
-const STRICT_PCHAR = `(?:${STRICT_UNRESERVED}|${STRICT_PCT_ENCODED}|${STRICT_SUB_DELIMS}|[:@])` // pchar
-const STRICT_PATH_ABEMPTY = `(?:/${STRICT_PCHAR}*)*` // path-abempty
-const STRICT_QUERY_CHARS = `(?:${STRICT_PCHAR}|[/?])*` // query
-const STRICT_FRAGMENT_CHARS = `(?:${STRICT_PCHAR}|[/?])*` // fragment
+const UNRESERVED = '[a-zA-Z0-9._~-]'
+const SUB_DELIMS = "[!$&'()*+,;=]"
+const PCHAR = `(?:${UNRESERVED}|${PCT_ENCODED}|${SUB_DELIMS}|[:@])` // pchar
+const PATH_ABEMPTY = `(?:/${PCHAR}*)*` // path-abempty
+const QUERY_CHARS = `(?:${PCHAR}|[/?])*` // query
+const FRAGMENT_CHARS = `(?:${PCHAR}|[/?])*` // fragment
 
 const DID_URL_MATCHER = new RegExp(
-  `^did:(${STRICT_METHOD}):(${STRICT_METHOD_ID})(${STRICT_PATH_ABEMPTY})(?:\\?(${STRICT_QUERY_CHARS}))?(?:#(${STRICT_FRAGMENT_CHARS}))?$`
+  `^did:(${METHOD}):(${METHOD_ID})(${PATH_ABEMPTY})(?:\\?(${QUERY_CHARS}))?(?:#(${FRAGMENT_CHARS}))?$`
 )
 
 /**
- * Parses a DID URL strictly according to the DID Core v1.1 specification ABNF
+ * Parses a DID URL strictly according to the DID Core v1.0 specification ABNF
  * (§3.1 DID Syntax, §3.2 DID URL Syntax). Unlike {@link parse}, this method
  * does not accept legacy DID parameters (`;key=value`) and enforces the
  * RFC 3986 character sets for path, query, and fragment components.
@@ -343,7 +298,7 @@ const DID_URL_MATCHER = new RegExp(
  * @param didUrl - the DID URL string to be parsed
  * @returns a ParsedDID object, or null if the input does not conform to the spec
  */
-export function parseStrict(didUrl: string): ParsedDID | null {
+export function parse(didUrl: string): ParsedDID | null {
   if (!didUrl) return null
   const m = didUrl.match(DID_URL_MATCHER)
   if (!m) return null
@@ -360,7 +315,7 @@ export function parseStrict(didUrl: string): ParsedDID | null {
   // (`did:x:y?` / `did:x:y#`), preserve the distinction.
   if (m[4] !== undefined) parsed.query = m[4]
   if (m[5] !== undefined) parsed.fragment = m[5]
-  // params are intentionally omitted (matrix parameters not in DID Core v1.1 spec)
+  // params are intentionally omitted (matrix parameters not in DID Core v1.0 spec)
 
   return parsed
 }
@@ -435,24 +390,6 @@ export class Resolver implements Resolvable {
         didResolutionMetadata: { error: 'unsupportedDidMethod' },
       }
     }
-    return this.cache(parsed, () => resolver(parsed.did, parsed, this, options))
-  }
-
-  async resolveStrict(didUrl: string, options: DIDResolutionOptions = {}): Promise<DIDResolutionResult> {
-    const parsed = parseStrict(didUrl)
-    if (parsed === null) {
-      return {
-        ...EMPTY_RESULT,
-        didResolutionMetadata: { error: 'invalidDid' },
-      }
-    }
-    const resolver = this.registry[parsed.method]
-    if (!resolver) {
-      return {
-        ...EMPTY_RESULT,
-        didResolutionMetadata: { error: 'unsupportedDidMethod' },
-      }
-    }
-    return this.cache(parsed, () => resolver(parsed.did, parsed, this, options))
+    return this.cache(parsed, () => resolver(parsed.did, parsed, this, options), options)
   }
 }
