@@ -95,7 +95,7 @@ The built-in cache uses a `Map` and does not have an automatic TTL, so entries d
 Enable the built-in cache by passing `cache: true` to the constructor:
 
 ```js
-const resolver = new Resolver({
+const resolver = new DIDResolver({
   ethr,
   web
 }, {
@@ -108,7 +108,7 @@ const resolver = new Resolver({
 To disable caching entirely, pass `cache: false`:
 
 ```js
-const resolver = new Resolver({
+const resolver = new DIDResolver({
   ethr,
   web
 }, {
@@ -139,13 +139,12 @@ const customCache: DIDCache = async (parsed, resolve, options) => {
   
   const cached = cache.get(parsed.didUrl)
   if (cached !== undefined) return cached
-  
   const doc = await resolve()
-  cache.set(parsed.didUrl, doc, 60000) // 60s TTL
+  cache.set(parsed.didUrl, doc, 60000)
   return doc
 }
 
-const resolver = new Resolver({
+const resolver = new DIDResolver({
   ethr,
   web
 }, {
