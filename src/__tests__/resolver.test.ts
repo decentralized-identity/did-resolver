@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { vi, describe, it, expect, beforeAll } from 'vitest'
-import { Resolver, parse, DIDResolutionResult } from '../resolver'
+import { vi, describe, it, expect, beforeAll, Mock } from 'vitest'
+import { Resolver, parse, DIDResolver, DIDResolutionResult } from '../resolver'
 
 describe('resolver', () => {
   describe('parse()', () => {
@@ -179,8 +179,7 @@ describe('resolver', () => {
 
   describe('resolve', () => {
     let resolver: Resolver
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mockmethod: any
+    let mockmethod: Mock<Parameters<DIDResolver>, ReturnType<DIDResolver>>
     const mockReturn = Promise.resolve({
       didResolutionMetadata: { contentType: 'application/did+json' },
       didDocument: {

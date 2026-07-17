@@ -336,13 +336,12 @@ export function wrapLegacyResolver(resolve: LegacyDIDResolver): DIDResolver {
         didResolutionMetadata: { contentType: 'application/did+ld+json' },
         didDocument: doc,
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e: unknown) {
       return {
         ...EMPTY_RESULT,
         didResolutionMetadata: {
           error: 'notFound',
-          message: e.toString(), // This is not in spec, but may be helpful
+          message: String(e), // This is not in spec, but may be helpful
         },
       }
     }
