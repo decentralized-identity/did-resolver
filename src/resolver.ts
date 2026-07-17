@@ -43,6 +43,7 @@ export interface DIDResolutionResult {
  */
 export interface DIDResolutionOptions extends Extensible {
   accept?: string
+  cache?: boolean
 }
 
 /**
@@ -235,7 +236,7 @@ export type DIDResolver = (
   options: DIDResolutionOptions
 ) => Promise<DIDResolutionResult>
 export type WrappedResolver = () => Promise<DIDResolutionResult>
-export type DIDCache = (parsed: ParsedDID, resolve: WrappedResolver) => Promise<DIDResolutionResult>
+export type DIDCache = (parsed: ParsedDID, resolve: WrappedResolver, options?: DIDResolutionOptions) => Promise<DIDResolutionResult>
 export type LegacyDIDResolver = (did: string, parsed: ParsedDID, resolver: Resolvable) => Promise<DIDDocument>
 
 export type ResolverRegistry = Record<string, DIDResolver>
@@ -251,8 +252,8 @@ export interface ResolverOptions {
 
 export function inMemoryCache(): DIDCache {
   const cache: Map<string, DIDResolutionResult> = new Map()
-  return async (parsed: ParsedDID, resolve) => {
-    if (parsed.params && parsed.params['no-cache'] === 'true') return await resolve()
+  return async (parsed: ParsedDID, resolve, options) => {
+    if (options?.cache === false) return await resolve()
 
     const cached = cache.get(parsed.didUrl)
     if (cached !== undefined) return cached
@@ -365,7 +366,10 @@ export class Resolver implements Resolvable {
 
   constructor(registry: ResolverRegistry = {}, options: ResolverOptions = {}) {
     this.registry = registry
-    this.cache = options.cache === true ? inMemoryCache() : options.cache || noCache
+    this.cache =
+      options.cache === true ? inMemoryCache() :
+      options.cache === false ? noCache :
+      options.cache || noCache
     if (options.legacyResolvers) {
       Object.keys(options.legacyResolvers).map((methodName) => {
         if (!this.registry[methodName]) {

@@ -497,7 +497,7 @@ describe('resolver', () => {
         return expect(mockmethod).toBeCalledTimes(1)
       })
 
-      it('should respect no-cache', async () => {
+      it('should cache identical resolutions with cache: true', async () => {
         mockmethod = vi.fn().mockReturnValue(mockReturn)
         resolver = new Resolver(
           {
@@ -506,35 +506,23 @@ describe('resolver', () => {
           { cache: true }
         )
 
-        await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
-          didResolutionMetadata: { contentType: 'application/did+json' },
-          didDocument: {
-            id: 'did:mock:abcdef',
-            verificationMethod: [
-              {
-                id: 'owner',
-                controller: '1234',
-                type: 'xyz',
-              },
-            ],
+        await resolver.resolve('did:mock:abcdef')
+        await resolver.resolve('did:mock:abcdef')
+        return expect(mockmethod).toBeCalledTimes(1) // Only calls once when cache: true
+      })
+
+      it('should not cache with cache: false', async () => {
+        mockmethod = vi.fn().mockReturnValue(mockReturn)
+        resolver = new Resolver(
+          {
+            mock: mockmethod,
           },
-          didDocumentMetadata: {},
-        })
-        await expect(resolver.resolve('did:mock:abcdef;no-cache=true')).resolves.toEqual({
-          didResolutionMetadata: { contentType: 'application/did+json' },
-          didDocument: {
-            id: 'did:mock:abcdef',
-            verificationMethod: [
-              {
-                id: 'owner',
-                controller: '1234',
-                type: 'xyz',
-              },
-            ],
-          },
-          didDocumentMetadata: {},
-        })
-        return expect(mockmethod).toBeCalledTimes(2)
+          { cache: false }
+        )
+
+        await resolver.resolve('did:mock:abcdef')
+        await resolver.resolve('did:mock:abcdef')
+        return expect(mockmethod).toBeCalledTimes(2) // Calls twice when cache: false
       })
 
       it('should not cache with different params', async () => {
@@ -602,6 +590,34 @@ describe('resolver', () => {
           didDocument: null,
           didDocumentMetadata: {},
         })
+        return expect(mockmethod).toBeCalledTimes(2)
+      })
+
+      it('should bypass cache with cache: false option', async () => {
+        mockmethod = vi.fn().mockReturnValue(mockReturn)
+        resolver = new Resolver(
+          {
+            mock: mockmethod,
+          },
+          { cache: true }
+        )
+
+        await resolver.resolve('did:mock:abcdef')
+        await resolver.resolve('did:mock:abcdef', { cache: false })
+        return expect(mockmethod).toBeCalledTimes(2)
+      })
+
+      it('should safely ignore cache: false when global cache: false', async () => {
+        mockmethod = vi.fn().mockReturnValue(mockReturn)
+        resolver = new Resolver(
+          {
+            mock: mockmethod,
+          },
+          { cache: false }
+        )
+
+        await resolver.resolve('did:mock:abcdef')
+        await resolver.resolve('did:mock:abcdef', { cache: false })
         return expect(mockmethod).toBeCalledTimes(2)
       })
     })
