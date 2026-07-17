@@ -200,3 +200,82 @@ import MyMethod from 'mymethod-did-resolver'
 const myResolver = MyMethod.getResolver()
 const resolver = new DIDResolver(myResolver)
 ```
+
+### Per-Method Parsing
+
+If your method has special syntax constraints beyond the base DID Core v1.0 spec, you can attach a method-specific parser to your resolver. This allows stricter syntax validation without duplicate parsing work.
+
+**Architecture:** Method-specific parsers receive a DID Core v1.0 compliant `ParsedDID` result from the global parser and only check method-specific syntax constraints. This ensures all DIDs pass DID Core v1.0 parsing first, then method-specific syntax rules. The parser is part of the resolver enhancement — both are exported together from `getResolver()`.
+
+```js
+export function getResolver() {
+  async function resolve(
+    did: string,
+    parsed: ParsedDID,
+    didResolver: Resolver,
+    options: DIDResolutionOptions
+  ): Promise<DIDDocument> {
+    console.log(parsed)
+    // {method: 'mymethod', id: 'abcdefg', did: 'did:mymethod:abcdefg/some/path#fragment=123', path: '/some/path', fragment: 'fragment=123'}
+    
+    const didDoc = ... // lookup doc
+    // If you need to lookup another did as part of resolving this did document, the primary DIDResolver object is passed in as well
+    const parentDID = await didResolver.resolve(...)
+    
+    // Return the DIDResolutionResult object
+    return {
+      didResolutionMetadata: { contentType: 'application/did+ld+json' },
+      didDocument: didDoc,
+      didDocumentMetadata: { ... }
+    }
+  }
+
+  function parser(parsed: ParsedDID): ParsedDID | null {
+    // Receive DID Core v1.0 compliant ParsedDID from global parser
+    // Only add method-specific syntax constraints
+    
+    // Example: enforce minimum id length for this method
+    if (parsed.id.length < 5) {
+      return null  // Reject with invalidDid error
+    }
+    
+    // Can refine/enrich the parsed result if needed
+    return {
+      ...parsed,
+      methodSpecificField: 'value'
+    }
+  }
+
+  // Attach parser to resolver — this is required for the parser to be used
+  resolve.parser = parser
+
+  return { myMethod: resolve }
+}
+```
+
+Consumers register the resolver normally — the parser is part of it:
+
+```js
+import { Resolver } from 'did-resolver'
+import MyMethod from 'mymethod-did-resolver'
+
+// For a single method
+const resolver = new Resolver(MyMethod.getResolver())
+
+// For multiple methods, flatten them together
+import OtherMethod from 'other-did-resolver'
+const resolver = new Resolver({
+  ...MyMethod.getResolver(),
+  ...OtherMethod.getResolver(),
+})
+```
+
+**Benefits:**
+
+- Method libraries control their own parse→resolve pipeline as a cohesive unit
+- Parser is discovered automatically via the resolver's `.parser` property
+- No duplicate parsing work
+- All DIDs guaranteed to pass DID Core v1.0 parsing first
+- Method parsers only implement method-specific syntax constraints
+- Parsers can refine/enrich the parsed result if needed
+- If parser returns `null`, resolution fails with `invalidDid` error

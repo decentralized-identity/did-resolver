@@ -227,14 +227,20 @@ export interface ParsedDID {
 }
 
 /**
- * The DID resolution function that DID Resolver implementations must implement.
+ * Optional parser function that can be attached to a DIDResolver to provide
+ * method-specific validation of the ParsedDID before resolution.
  */
-export type DIDResolver = (
-  did: string,
-  parsed: ParsedDID,
-  resolver: Resolvable,
-  options: DIDResolutionOptions
-) => Promise<DIDResolutionResult>
+export type DIDParser = (parsed: ParsedDID) => ParsedDID | null
+
+/**
+ * The DID resolution function that DID Resolver implementations must implement.
+ * Can optionally have a `.parser` property for method-specific DID validation.
+ */
+export interface DIDResolver {
+  (did: string, parsed: ParsedDID, resolver: Resolvable, options: DIDResolutionOptions): Promise<DIDResolutionResult>
+  parser?: DIDParser
+}
+
 export type WrappedResolver = () => Promise<DIDResolutionResult>
 export type DIDCache = (parsed: ParsedDID, resolve: WrappedResolver, options?: DIDResolutionOptions) => Promise<DIDResolutionResult>
 export type LegacyDIDResolver = (did: string, parsed: ParsedDID, resolver: Resolvable) => Promise<DIDDocument>
@@ -379,13 +385,14 @@ export class Resolver implements Resolvable {
   }
 
   async resolve(didUrl: string, options: DIDResolutionOptions = {}): Promise<DIDResolutionResult> {
-    const parsed = parse(didUrl)
+    let parsed = parse(didUrl)
     if (parsed === null) {
       return {
         ...EMPTY_RESULT,
         didResolutionMetadata: { error: 'invalidDid' },
       }
     }
+
     const resolver = this.registry[parsed.method]
     if (!resolver) {
       return {
@@ -393,6 +400,19 @@ export class Resolver implements Resolvable {
         didResolutionMetadata: { error: 'unsupportedDidMethod' },
       }
     }
+
+    // Use resolver's method-specific parser if available for additional validation
+    if (resolver.parser) {
+      const refined = resolver.parser(parsed)
+      if (refined === null) {
+        return {
+          ...EMPTY_RESULT,
+          didResolutionMetadata: { error: 'invalidDid' },
+        }
+      }
+      parsed = refined
+    }
+
     return this.cache(parsed, () => resolver(parsed.did, parsed, this, options), options)
   }
 }

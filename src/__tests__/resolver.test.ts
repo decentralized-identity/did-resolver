@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import { vi, describe, it, expect, beforeAll, Mock } from 'vitest'
-import { Resolver, parse, DIDResolver, DIDResolutionResult } from '../resolver'
+import { Resolver, parse, DIDResolver, DIDParser, ParsedDID, DIDResolutionResult } from '../resolver'
 
 describe('resolver', () => {
   describe('parse()', () => {
@@ -618,6 +618,78 @@ describe('resolver', () => {
         await resolver.resolve('did:mock:abcdef')
         await resolver.resolve('did:mock:abcdef', { cache: false })
         return expect(mockmethod).toBeCalledTimes(2)
+      })
+    })
+
+    describe('per-method parsers', () => {
+      it('uses resolver-attached parser for validation', async () => {
+        const customParser: DIDParser = (parsed: ParsedDID) => {
+          // Only accept specific id format for this method
+          if (parsed.id.length < 5) {
+            return null
+          }
+          // Refine the parsed result if needed
+          return {
+            ...parsed,
+            id: `refined-${parsed.id}`
+          }
+        }
+
+        const customResolver: DIDResolver = async (did: string, parsed: ParsedDID): Promise<DIDResolutionResult> => ({
+          didResolutionMetadata: { contentType: 'application/did+json' },
+          didDocument: { id: parsed.id },
+          didDocumentMetadata: {}
+        })
+
+        // Attach parser to resolver
+        customResolver.parser = customParser
+
+        const resolver = new Resolver({
+          custom: customResolver
+        })
+
+        const result = await resolver.resolve('did:custom:abcdef')
+        return expect(result.didDocument?.id).toBe('refined-abcdef')
+      })
+
+      it('rejects invalid DID when resolver parser returns null', async () => {
+        const customParser: DIDParser = (parsed: ParsedDID) => {
+          // Only accept ids with length >= 5
+          if (parsed.id.length < 5) {
+            return null
+          }
+          return parsed
+        }
+
+        const customResolver: DIDResolver = async (): Promise<DIDResolutionResult> => ({
+          didResolutionMetadata: {},
+          didDocument: {},
+          didDocumentMetadata: {}
+        })
+
+        customResolver.parser = customParser
+
+        const resolver = new Resolver({
+          custom: customResolver
+        })
+
+        const result = await resolver.resolve('did:custom:abc')
+        return expect(result.didResolutionMetadata.error).toBe('invalidDid')
+      })
+
+      it('skips custom parser if resolver does not have one', async () => {
+        const customResolver: DIDResolver = async (did: string, parsed: ParsedDID): Promise<DIDResolutionResult> => ({
+          didResolutionMetadata: {},
+          didDocument: { id: parsed.id },
+          didDocumentMetadata: {}
+        })
+
+        const resolver = new Resolver({
+          custom: customResolver
+        })
+
+        const result = await resolver.resolve('did:custom:xyz')
+        return expect(result.didDocument?.id).toBe('xyz')
       })
     })
   })
