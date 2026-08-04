@@ -86,14 +86,13 @@ const doc = await resolver.resolve('did:ethr:0xF3beAC30C498D9E26865F34fCAa57dBB9
 
 ## Caching
 
-Resolving DID Documents can be expensive. It is in most cases best to cache DID documents. Caching has to be
-specifically enabled using the `cache` parameter
+Resolving DID Documents can be expensive. It is in most cases best to cache DID documents. Caching is controlled via the `cache` option, which accepts a boolean value or a custom `DIDCache` function.
 
-The built-in cache uses a Map, but does not have an automatic TTL, so entries don't expire. This is fine in most web,
-mobile and serverless contexts. If you run a long-running process you may want to use an existing configurable caching
-system.
+### Built-in caching
 
-The built-in Cache can be enabled by passing in a `true` value to the constructor:
+The built-in cache uses a `Map` and does not have an automatic TTL, so entries don't expire. This is fine in most web, mobile and serverless contexts. If you run a long-running process, consider using a custom cache with expiration.
+
+Enable the built-in cache by passing `cache: true` to the constructor:
 
 ```js
 const resolver = new DIDResolver({
@@ -104,17 +103,44 @@ const resolver = new DIDResolver({
 })
 ```
 
-Here is an example using `js-cache` which has not been tested.
+### Disabling cache
+
+To disable caching entirely, pass `cache: false`:
 
 ```js
-var cache = require('js-cache')
-const customCache : DIDCache = (parsed, resolve) => {
-  // DID spec requires to not cache if no-cache param is set
-  if (parsed.params && parsed.params['no-cache'] === 'true') return await resolve()
+const resolver = new DIDResolver({
+  ethr,
+  web
+}, {
+  cache: false
+})
+```
+
+### Per-call cache control
+
+You can override the global cache setting on a per-call basis using the `cache` option in `DIDResolutionOptions`:
+
+```js
+// Global cache enabled, but disable for this specific resolution
+const doc = await resolver.resolve('did:ethr:0xabcd...', { cache: false })
+
+// Global cache disabled, but enable for this specific resolution
+const doc = await resolver.resolve('did:ethr:0xabcd...', { cache: true })
+```
+
+### Custom cache implementation
+
+For advanced use cases, implement a custom `DIDCache` function. It receives the parsed DID, a resolve function, and optional resolution options:
+
+```js
+const customCache: DIDCache = async (parsed, resolve, options) => {
+  // Respect per-call cache control
+  if (options?.cache === false) return await resolve()
+  
   const cached = cache.get(parsed.didUrl)
   if (cached !== undefined) return cached
   const doc = await resolve()
-  cache.set(parsed, doc, 60000)
+  cache.set(parsed.didUrl, doc, 60000)
   return doc
 }
 

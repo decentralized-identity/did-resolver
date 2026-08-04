@@ -43,6 +43,7 @@ export interface DIDResolutionResult {
  */
 export interface DIDResolutionOptions extends Extensible {
   accept?: string
+  cache?: boolean
 }
 
 /**
@@ -77,11 +78,7 @@ export interface DIDDocumentMetadata extends Extensible {
  * @see {@link https://www.w3.org/TR/did-core/#verification-relationships}
  */
 export type KeyCapabilitySection =
-  | 'authentication'
-  | 'assertionMethod'
-  | 'keyAgreement'
-  | 'capabilityInvocation'
-  | 'capabilityDelegation'
+  'authentication' | 'assertionMethod' | 'keyAgreement' | 'capabilityInvocation' | 'capabilityDelegation'
 
 /**
  * Represents a DID document.
@@ -227,7 +224,6 @@ export interface ParsedDID {
   path?: string
   fragment?: string
   query?: string
-  params?: Params
 }
 
 /**
@@ -240,7 +236,7 @@ export type DIDResolver = (
   options: DIDResolutionOptions
 ) => Promise<DIDResolutionResult>
 export type WrappedResolver = () => Promise<DIDResolutionResult>
-export type DIDCache = (parsed: ParsedDID, resolve: WrappedResolver) => Promise<DIDResolutionResult>
+export type DIDCache = (parsed: ParsedDID, resolve: WrappedResolver, options?: DIDResolutionOptions) => Promise<DIDResolutionResult>
 export type LegacyDIDResolver = (did: string, parsed: ParsedDID, resolver: Resolvable) => Promise<DIDDocument>
 
 export type ResolverRegistry = Record<string, DIDResolver>
@@ -256,8 +252,8 @@ export interface ResolverOptions {
 
 export function inMemoryCache(): DIDCache {
   const cache: Map<string, DIDResolutionResult> = new Map()
-  return async (parsed: ParsedDID, resolve) => {
-    if (parsed.params && parsed.params['no-cache'] === 'true') return await resolve()
+  return async (parsed: ParsedDID, resolve, options) => {
+    if (options?.cache === false) return await resolve()
 
     const cached = cache.get(parsed.didUrl)
     if (cached !== undefined) return cached
@@ -273,48 +269,56 @@ export function noCache(parsed: ParsedDID, resolve: WrappedResolver): Promise<DI
   return resolve()
 }
 
-const PCT_ENCODED = '(?:%[0-9a-fA-F]{2})'
-const ID_CHAR = `(?:[a-zA-Z0-9._-]|${PCT_ENCODED})`
-const METHOD = '([a-z0-9]+)'
-const METHOD_ID = `((?:${ID_CHAR}*:)*(${ID_CHAR}+))`
-const PARAM_CHAR = '[a-zA-Z0-9_.:%-]'
-const PARAM = `;${PARAM_CHAR}+=${PARAM_CHAR}*`
-const PARAMS = `((${PARAM})*)`
-const PATH = `(/[^#?]*)?`
-const QUERY = `([?][^#]*)?`
-const FRAGMENT = `(#.*)?`
-const DID_MATCHER = new RegExp(`^did:${METHOD}:${METHOD_ID}${PARAMS}${PATH}${QUERY}${FRAGMENT}$`)
+// RFC 3986 ABNF components (referenced by DID Core v1.0 §3.2)
+const HEXDIG = '[0-9a-fA-F]' // allows both lowercase and uppercase
+const PCT_ENCODED = `(?:%${HEXDIG}{2})` // pct-encoded = "%" HEXDIG HEXDIG
+
+// DID Core v1.0 §3.1
+const ID_CHAR = `(?:[a-zA-Z0-9._-]|${PCT_ENCODED})` // idchar
+const METHOD = '[a-z0-9]+' // method-name = 1*(%x61-7A / DIGIT)
+const METHOD_ID = `(?:${ID_CHAR}*:)*${ID_CHAR}+` // method-specific-id
+
+// DID Core v1.0 §3.2 tail via RFC 3986 §3.3
+const UNRESERVED = '[a-zA-Z0-9._~-]'
+const SUB_DELIMS = "[!$&'()*+,;=]"
+const PCHAR = `(?:${UNRESERVED}|${PCT_ENCODED}|${SUB_DELIMS}|[:@])` // pchar
+const PATH_ABEMPTY = `(?:/${PCHAR}*)*` // path-abempty
+const QUERY_CHARS = `(?:${PCHAR}|[/?])*` // query
+const FRAGMENT_CHARS = `(?:${PCHAR}|[/?])*` // fragment
+
+const DID_URL_MATCHER = new RegExp(
+  `^did:(${METHOD}):(${METHOD_ID})(${PATH_ABEMPTY})(?:\\?(${QUERY_CHARS}))?(?:#(${FRAGMENT_CHARS}))?$`
+)
 
 /**
- * Parses a DID URL and builds a {@link ParsedDID | ParsedDID object}
+ * Parses a DID URL strictly according to the DID Core v1.0 specification ABNF
+ * (§3.1 DID Syntax, §3.2 DID URL Syntax). Unlike {@link parse}, this method
+ * does not accept legacy DID parameters (`;key=value`) and enforces the
+ * RFC 3986 character sets for path, query, and fragment components.
  *
  * @param didUrl - the DID URL string to be parsed
- * @returns a ParsedDID object, or null if the input is not a DID URL
+ * @returns a ParsedDID object, or null if the input does not conform to the spec
  */
 export function parse(didUrl: string): ParsedDID | null {
-  if (didUrl === '' || !didUrl) return null
-  const sections = didUrl.match(DID_MATCHER)
-  if (sections) {
-    const parts: ParsedDID = {
-      did: `did:${sections[1]}:${sections[2]}`,
-      method: sections[1],
-      id: sections[2],
-      didUrl,
-    }
-    if (sections[4]) {
-      const params = sections[4].slice(1).split(';')
-      parts.params = {}
-      for (const p of params) {
-        const kv = p.split('=')
-        parts.params[kv[0]] = kv[1]
-      }
-    }
-    if (sections[6]) parts.path = sections[6]
-    if (sections[7]) parts.query = sections[7].slice(1)
-    if (sections[8]) parts.fragment = sections[8].slice(1)
-    return parts
+  if (!didUrl) return null
+  const m = didUrl.match(DID_URL_MATCHER)
+  if (!m) return null
+
+  const parsed: ParsedDID = {
+    did: `did:${m[1]}:${m[2]}`,
+    method: m[1],
+    id: m[2],
+    didUrl,
   }
-  return null
+  // path-abempty always matches (possibly empty); only attach a real path.
+  if (m[3]) parsed.path = m[3]
+  // query/fragment groups are `undefined` when absent, `''` when present but empty
+  // (`did:x:y?` / `did:x:y#`), preserve the distinction.
+  if (m[4] !== undefined) parsed.query = m[4]
+  if (m[5] !== undefined) parsed.fragment = m[5]
+  // params are intentionally omitted (matrix parameters not in DID Core v1.0 spec)
+
+  return parsed
 }
 
 const EMPTY_RESULT: DIDResolutionResult = {
@@ -332,13 +336,12 @@ export function wrapLegacyResolver(resolve: LegacyDIDResolver): DIDResolver {
         didResolutionMetadata: { contentType: 'application/did+ld+json' },
         didDocument: doc,
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e: unknown) {
       return {
         ...EMPTY_RESULT,
         didResolutionMetadata: {
           error: 'notFound',
-          message: e.toString(), // This is not in spec, but may be helpful
+          message: String(e), // This is not in spec, but may be helpful
         },
       }
     }
@@ -362,7 +365,10 @@ export class Resolver implements Resolvable {
 
   constructor(registry: ResolverRegistry = {}, options: ResolverOptions = {}) {
     this.registry = registry
-    this.cache = options.cache === true ? inMemoryCache() : options.cache || noCache
+    this.cache =
+      options.cache === true ? inMemoryCache() :
+      options.cache === false ? noCache :
+      options.cache || noCache
     if (options.legacyResolvers) {
       Object.keys(options.legacyResolvers).map((methodName) => {
         if (!this.registry[methodName]) {
@@ -387,6 +393,6 @@ export class Resolver implements Resolvable {
         didResolutionMetadata: { error: 'unsupportedDidMethod' },
       }
     }
-    return this.cache(parsed, () => resolver(parsed.did, parsed, this, options))
+    return this.cache(parsed, () => resolver(parsed.did, parsed, this, options), options)
   }
 }
