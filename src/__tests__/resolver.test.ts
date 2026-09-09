@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { vi, describe, it, expect, beforeAll } from 'vitest'
-import { Resolver, parse, DIDResolutionResult } from '../resolver'
+import { vi, describe, it, expect, beforeAll, Mock } from 'vitest'
+import { Resolver, parse, DIDResolver, DIDResolutionResult } from '../resolver'
 
 describe('resolver', () => {
   describe('parse()', () => {
@@ -52,40 +52,6 @@ describe('resolver', () => {
         did: 'did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI',
         didUrl: 'did:nacl:Md8JiMIwsapml_FtQ2ngnGftNP5UmVCAUuhnLyAsPxI',
       })
-      expect(parse('did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high')).toEqual({
-        method: 'example',
-        id: '21tDAKCERh95uGgKbJNHYp',
-        did: 'did:example:21tDAKCERh95uGgKbJNHYp',
-        didUrl: 'did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high',
-        params: {
-          service: 'agent',
-          'foo:bar': 'high',
-        },
-      })
-      expect(parse('did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high?foo=bar')).toEqual({
-        method: 'example',
-        id: '21tDAKCERh95uGgKbJNHYp',
-        didUrl: 'did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high?foo=bar',
-        did: 'did:example:21tDAKCERh95uGgKbJNHYp',
-        query: 'foo=bar',
-        params: {
-          service: 'agent',
-          'foo:bar': 'high',
-        },
-      })
-      expect(parse('did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high/some/path?foo=bar#key1')).toEqual({
-        method: 'example',
-        id: '21tDAKCERh95uGgKbJNHYp',
-        didUrl: 'did:example:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high/some/path?foo=bar#key1',
-        did: 'did:example:21tDAKCERh95uGgKbJNHYp',
-        query: 'foo=bar',
-        path: '/some/path',
-        fragment: 'key1',
-        params: {
-          service: 'agent',
-          'foo:bar': 'high',
-        },
-      })
       expect(parse('did:web:example.com%3A8443')).toEqual({
         method: 'web',
         id: 'example.com%3A8443',
@@ -97,21 +63,6 @@ describe('resolver', () => {
         id: 'example.com:path:some%2Bsubpath',
         didUrl: 'did:web:example.com:path:some%2Bsubpath',
         did: 'did:web:example.com:path:some%2Bsubpath',
-      })
-      expect(
-        parse('did:example:test:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high/some/path?foo=bar#key1')
-      ).toEqual({
-        method: 'example',
-        id: 'test:21tDAKCERh95uGgKbJNHYp',
-        didUrl: 'did:example:test:21tDAKCERh95uGgKbJNHYp;service=agent;foo:bar=high/some/path?foo=bar#key1',
-        did: 'did:example:test:21tDAKCERh95uGgKbJNHYp',
-        query: 'foo=bar',
-        path: '/some/path',
-        fragment: 'key1',
-        params: {
-          service: 'agent',
-          'foo:bar': 'high',
-        },
       })
       expect(parse('did:123:test::test2')).toEqual({
         method: '123',
@@ -139,12 +90,96 @@ describe('resolver', () => {
       expect(parse('did:CAP:id')).toEqual(null)
       expect(parse('did:method:id::anotherid%r9')).toEqual(null)
     })
+
+    it('handles query and fragment correctly', () => {
+      expect(parse('did:x:y?key=value')).toEqual({
+        method: 'x',
+        id: 'y',
+        did: 'did:x:y',
+        didUrl: 'did:x:y?key=value',
+        query: 'key=value',
+      })
+      expect(parse('did:x:y?')).toEqual({
+        method: 'x',
+        id: 'y',
+        did: 'did:x:y',
+        didUrl: 'did:x:y?',
+        query: '',
+      })
+      expect(parse('did:x:y#')).toEqual({
+        method: 'x',
+        id: 'y',
+        did: 'did:x:y',
+        didUrl: 'did:x:y#',
+        fragment: '',
+      })
+      expect(parse('did:x:y?query#fragment')).toEqual({
+        method: 'x',
+        id: 'y',
+        did: 'did:x:y',
+        didUrl: 'did:x:y?query#fragment',
+        query: 'query',
+        fragment: 'fragment',
+      })
+    })
+
+    it('supports RFC 3986 path characters', () => {
+      expect(parse('did:x:y/path~with-tilde')).toEqual({
+        method: 'x',
+        id: 'y',
+        path: '/path~with-tilde',
+        did: 'did:x:y',
+        didUrl: 'did:x:y/path~with-tilde',
+      })
+      expect(parse('did:x:y/path!$&()*+,;=')).toEqual({
+        method: 'x',
+        id: 'y',
+        path: '/path!$&()*+,;=',
+        did: 'did:x:y',
+        didUrl: 'did:x:y/path!$&()*+,;=',
+      })
+      expect(parse('did:x:y//double/slash')).toEqual({
+        method: 'x',
+        id: 'y',
+        path: '//double/slash',
+        did: 'did:x:y',
+        didUrl: 'did:x:y//double/slash',
+      })
+    })
+
+    it('supports lowercase hex in percent-encoding', () => {
+      expect(parse('did:x:y%3a')).toEqual({
+        method: 'x',
+        id: 'y%3a',
+        did: 'did:x:y%3a',
+        didUrl: 'did:x:y%3a',
+      })
+      expect(parse('did:x:y%2f%3apath')).toEqual({
+        method: 'x',
+        id: 'y%2f%3apath',
+        did: 'did:x:y%2f%3apath',
+        didUrl: 'did:x:y%2f%3apath',
+      })
+    })
+
+    it('allows empty idchar segments', () => {
+      expect(parse('did:example:id::with::empty::segments')).toEqual({
+        method: 'example',
+        id: 'id::with::empty::segments',
+        did: 'did:example:id::with::empty::segments',
+        didUrl: 'did:example:id::with::empty::segments',
+      })
+    })
+
+    it('rejects matrix parameters', () => {
+      expect(parse('did:example:id;param=value')).toEqual(null)
+      expect(parse('did:example:id;param=value/path')).toEqual(null)
+    })
   })
 
   describe('resolve', () => {
     let resolver: Resolver
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mockmethod: any
+    let mockmethod: Mock<Parameters<DIDResolver>, ReturnType<DIDResolver>>
     const mockReturn = Promise.resolve({
       didResolutionMetadata: { contentType: 'application/did+json' },
       didDocument: {
@@ -461,7 +496,7 @@ describe('resolver', () => {
         return expect(mockmethod).toBeCalledTimes(1)
       })
 
-      it('should respect no-cache', async () => {
+      it('should cache identical resolutions with cache: true', async () => {
         mockmethod = vi.fn().mockReturnValue(mockReturn)
         resolver = new Resolver(
           {
@@ -470,35 +505,23 @@ describe('resolver', () => {
           { cache: true }
         )
 
-        await expect(resolver.resolve('did:mock:abcdef')).resolves.toEqual({
-          didResolutionMetadata: { contentType: 'application/did+json' },
-          didDocument: {
-            id: 'did:mock:abcdef',
-            verificationMethod: [
-              {
-                id: 'owner',
-                controller: '1234',
-                type: 'xyz',
-              },
-            ],
+        await resolver.resolve('did:mock:abcdef')
+        await resolver.resolve('did:mock:abcdef')
+        return expect(mockmethod).toBeCalledTimes(1) // Only calls once when cache: true
+      })
+
+      it('should not cache with cache: false', async () => {
+        mockmethod = vi.fn().mockReturnValue(mockReturn)
+        resolver = new Resolver(
+          {
+            mock: mockmethod,
           },
-          didDocumentMetadata: {},
-        })
-        await expect(resolver.resolve('did:mock:abcdef;no-cache=true')).resolves.toEqual({
-          didResolutionMetadata: { contentType: 'application/did+json' },
-          didDocument: {
-            id: 'did:mock:abcdef',
-            verificationMethod: [
-              {
-                id: 'owner',
-                controller: '1234',
-                type: 'xyz',
-              },
-            ],
-          },
-          didDocumentMetadata: {},
-        })
-        return expect(mockmethod).toBeCalledTimes(2)
+          { cache: false }
+        )
+
+        await resolver.resolve('did:mock:abcdef')
+        await resolver.resolve('did:mock:abcdef')
+        return expect(mockmethod).toBeCalledTimes(2) // Calls twice when cache: false
       })
 
       it('should not cache with different params', async () => {
@@ -566,6 +589,34 @@ describe('resolver', () => {
           didDocument: null,
           didDocumentMetadata: {},
         })
+        return expect(mockmethod).toBeCalledTimes(2)
+      })
+
+      it('should bypass cache with cache: false option', async () => {
+        mockmethod = vi.fn().mockReturnValue(mockReturn)
+        resolver = new Resolver(
+          {
+            mock: mockmethod,
+          },
+          { cache: true }
+        )
+
+        await resolver.resolve('did:mock:abcdef')
+        await resolver.resolve('did:mock:abcdef', { cache: false })
+        return expect(mockmethod).toBeCalledTimes(2)
+      })
+
+      it('should safely ignore cache: false when global cache: false', async () => {
+        mockmethod = vi.fn().mockReturnValue(mockReturn)
+        resolver = new Resolver(
+          {
+            mock: mockmethod,
+          },
+          { cache: false }
+        )
+
+        await resolver.resolve('did:mock:abcdef')
+        await resolver.resolve('did:mock:abcdef', { cache: false })
         return expect(mockmethod).toBeCalledTimes(2)
       })
     })
