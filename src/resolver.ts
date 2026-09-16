@@ -242,7 +242,11 @@ export interface DIDResolver {
 }
 
 export type WrappedResolver = () => Promise<DIDResolutionResult>
-export type DIDCache = (parsed: ParsedDID, resolve: WrappedResolver, options?: DIDResolutionOptions) => Promise<DIDResolutionResult>
+export type DIDCache = (
+  parsed: ParsedDID,
+  resolve: WrappedResolver,
+  options?: DIDResolutionOptions
+) => Promise<DIDResolutionResult>
 export type LegacyDIDResolver = (did: string, parsed: ParsedDID, resolver: Resolvable) => Promise<DIDDocument>
 
 export type ResolverRegistry = Record<string, DIDResolver>
@@ -371,10 +375,7 @@ export class Resolver implements Resolvable {
 
   constructor(registry: ResolverRegistry = {}, options: ResolverOptions = {}) {
     this.registry = registry
-    this.cache =
-      options.cache === true ? inMemoryCache() :
-      options.cache === false ? noCache :
-      options.cache || noCache
+    this.cache = options.cache === true ? inMemoryCache() : options.cache === false ? noCache : options.cache || noCache
     if (options.legacyResolvers) {
       Object.keys(options.legacyResolvers).map((methodName) => {
         if (!this.registry[methodName]) {

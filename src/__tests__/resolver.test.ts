@@ -631,21 +631,21 @@ describe('resolver', () => {
           // Refine the parsed result if needed
           return {
             ...parsed,
-            id: `refined-${parsed.id}`
+            id: `refined-${parsed.id}`,
           }
         }
 
         const customResolver: DIDResolver = async (did: string, parsed: ParsedDID): Promise<DIDResolutionResult> => ({
           didResolutionMetadata: { contentType: 'application/did+json' },
           didDocument: { id: parsed.id },
-          didDocumentMetadata: {}
+          didDocumentMetadata: {},
         })
 
         // Attach parser to resolver
         customResolver.parser = customParser
 
         const resolver = new Resolver({
-          custom: customResolver
+          custom: customResolver,
         })
 
         const result = await resolver.resolve('did:custom:abcdef')
@@ -664,13 +664,13 @@ describe('resolver', () => {
         const customResolver: DIDResolver = async (): Promise<DIDResolutionResult> => ({
           didResolutionMetadata: {},
           didDocument: {},
-          didDocumentMetadata: {}
+          didDocumentMetadata: {},
         })
 
         customResolver.parser = customParser
 
         const resolver = new Resolver({
-          custom: customResolver
+          custom: customResolver,
         })
 
         const result = await resolver.resolve('did:custom:abc')
@@ -681,11 +681,11 @@ describe('resolver', () => {
         const customResolver: DIDResolver = async (did: string, parsed: ParsedDID): Promise<DIDResolutionResult> => ({
           didResolutionMetadata: {},
           didDocument: { id: parsed.id },
-          didDocumentMetadata: {}
+          didDocumentMetadata: {},
         })
 
         const resolver = new Resolver({
-          custom: customResolver
+          custom: customResolver,
         })
 
         const result = await resolver.resolve('did:custom:xyz')
