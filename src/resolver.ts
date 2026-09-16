@@ -108,7 +108,7 @@ export type DIDDocument = {
    */
   publicKey?: VerificationMethod[]
 } & {
-  [relationship in VerificationRelationship]?: (string | VerificationMethod)[]
+  [x in VerificationRelationship]?: (string | VerificationMethod)[]
 }
 
 /**
