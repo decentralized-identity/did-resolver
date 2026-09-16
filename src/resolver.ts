@@ -76,12 +76,20 @@ export interface DIDDocumentMetadata extends Extensible {
  *
  * @see {@link https://www.w3.org/TR/did-core/#verification-relationships}
  */
-export type KeyCapabilitySection =
-  | 'authentication'
-  | 'assertionMethod'
-  | 'keyAgreement'
-  | 'capabilityInvocation'
-  | 'capabilityDelegation'
+export const VerificationRelationship = {
+  Authentication: 'authentication',
+  AssertionMethod: 'assertionMethod',
+  KeyAgreement: 'keyAgreement',
+  CapabilityInvocation: 'capabilityInvocation',
+  CapabilityDelegation: 'capabilityDelegation',
+} as const
+
+export type VerificationRelationship = (typeof VerificationRelationship)[keyof typeof VerificationRelationship]
+
+/**
+ * Backwards-compatibility alias
+ */
+export type KeyCapabilitySection = VerificationRelationship
 
 /**
  * Represents a DID document.
@@ -100,7 +108,7 @@ export type DIDDocument = {
    */
   publicKey?: VerificationMethod[]
 } & {
-  [x in KeyCapabilitySection]?: (string | VerificationMethod)[]
+  [relationship in VerificationRelationship]?: (string | VerificationMethod)[]
 }
 
 /**

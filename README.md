@@ -13,6 +13,22 @@ from the [W3C Credentials Community Group](https://w3c-ccg.github.io).
 The library does not implement any specific DID method, but allows DID method implementors to release npm packages that
 applications can add.
 
+## DID verification relationships
+
+The `VerificationRelationship` runtime constants represent the verification relationships defined by DID Core:
+
+```ts
+import { VerificationRelationship, type DIDDocument } from 'did-resolver'
+
+const document: DIDDocument = {
+  id: 'did:example:123',
+  [VerificationRelationship.Authentication]: ['did:example:123#key-1'],
+}
+```
+
+The corresponding `VerificationRelationship` type also accepts the underlying string literals. The existing
+`KeyCapabilitySection` type remains available as a backwards-compatible alias.
+
 ## Configure `Resolver` object
 
 You are now required to preconfigure a resolver during instantiation. The `Resolver` constructor expects a registry of
