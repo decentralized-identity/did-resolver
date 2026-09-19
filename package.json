@@ -6,7 +6,7 @@
   "main": "./lib/resolver.cjs",
   "module": "./lib/resolver.mjs",
   "types": "./lib/resolver.d.ts",
-  "type": "commonjs",
+  "type": "module",
   "files": [
     "lib",
     "LICENSE"
@@ -39,7 +39,7 @@
     "test": "vitest run",
     "test:ci": "vitest run --coverage",
     "clean": "rm -rf lib",
-    "build": "tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && node scripts/postbuild.mjs",
+    "build": "tsc && tsc -p tsconfig.cjs.json && node scripts/postbuild.mjs",
     "format": "prettier --write \"src/**/*.[jt]s\"",
     "lint": "eslint \"src/**/*.[jt]s\"",
     "release:publish": "changeset publish"
