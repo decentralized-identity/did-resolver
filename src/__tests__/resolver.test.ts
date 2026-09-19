@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import { vi, describe, it, expect, beforeAll, Mock } from 'vitest'
-import { Resolver, parse, DIDResolver, DIDParser, ParsedDID, DIDResolutionResult } from '../resolver'
+import { Resolver, parse, DIDResolver, DIDParser, ParsedDID, DIDResolutionResult } from '../resolver.js'
 
 describe('resolver', () => {
   describe('parse()', () => {

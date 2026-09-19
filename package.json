@@ -46,14 +46,16 @@
   },
   "devDependencies": {
     "@changesets/cli": "3.0.3",
-    "@eslint/js": "10.0.1",
+    "@typescript-eslint/eslint-plugin": "8.70.0",
+    "@typescript-eslint/parser": "8.70.0",
     "@typescript/native": "npm:typescript@7.0.2",
     "@vitest/coverage-v8": "5.0.1",
+    "@vitest/eslint-plugin": "1.6.27",
     "eslint": "10.10.0",
     "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-prettier": "5.5.6",
     "prettier": "3.9.6",
     "typescript": "npm:@typescript/typescript6@6.0.2",
-    "typescript-eslint": "8.70.0",
     "vitest": "5.0.1"
   },
   "packageManager": "pnpm@12.4.2"
