@@ -6,7 +6,7 @@
   "main": "./lib/resolver.cjs",
   "module": "./lib/resolver.mjs",
   "types": "./lib/resolver.d.ts",
-  "type": "commonjs",
+  "type": "module",
   "files": [
     "lib",
     "LICENSE"
@@ -39,22 +39,23 @@
     "test": "vitest run",
     "test:ci": "vitest run --coverage",
     "clean": "rm -rf lib",
-    "build": "tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && node scripts/postbuild.mjs",
+    "build": "tsc && tsc -p tsconfig.cjs.json && node scripts/postbuild.mjs",
     "format": "prettier --write \"src/**/*.[jt]s\"",
     "lint": "eslint \"src/**/*.[jt]s\"",
-    "release": "semantic-release --debug"
+    "release:publish": "changeset publish"
   },
   "devDependencies": {
-    "@eslint/js": "10.0.1",
-    "@semantic-release/changelog": "7.0.0",
-    "@semantic-release/git": "11.0.1",
+    "@changesets/cli": "3.0.3",
+    "@typescript-eslint/eslint-plugin": "8.70.0",
+    "@typescript-eslint/parser": "8.70.0",
+    "@typescript/native": "npm:typescript@7.0.2",
     "@vitest/coverage-v8": "5.0.1",
+    "@vitest/eslint-plugin": "1.6.27",
     "eslint": "10.10.0",
     "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-prettier": "5.5.6",
     "prettier": "3.9.6",
-    "semantic-release": "25.0.9",
-    "typescript": "6.0.3",
-    "typescript-eslint": "8.70.0",
+    "typescript": "npm:@typescript/typescript6@6.0.2",
     "vitest": "5.0.1"
   },
   "packageManager": "pnpm@12.4.2"
