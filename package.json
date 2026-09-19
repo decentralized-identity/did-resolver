@@ -42,6 +42,7 @@
     "build": "tsc && tsc -p tsconfig.cjs.json && node scripts/postbuild.mjs",
     "format": "prettier --write \"src/**/*.[jt]s\"",
     "lint": "eslint \"src/**/*.[jt]s\"",
+    "changeset": "changeset",
     "release:publish": "changeset publish"
   },
   "devDependencies": {
