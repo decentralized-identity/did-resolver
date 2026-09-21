@@ -2,16 +2,16 @@
 import { renameSync, copyFileSync, rmSync } from 'fs'
 
 // ESM: rename .js -> .mjs, .d.ts -> .d.mts, keep a .d.ts copy for legacy consumers
-renameSync('lib/esm/resolver.js', 'lib/resolver.mjs')
-renameSync('lib/esm/resolver.js.map', 'lib/resolver.mjs.map')
-renameSync('lib/esm/resolver.d.ts', 'lib/resolver.d.mts')
-copyFileSync('lib/resolver.d.mts', 'lib/resolver.d.ts')
-renameSync('lib/esm/resolver.d.ts.map', 'lib/resolver.d.ts.map')
+renameSync('lib/esm/index.js', 'lib/index.mjs')
+renameSync('lib/esm/index.js.map', 'lib/index.mjs.map')
+renameSync('lib/esm/index.d.ts', 'lib/index.d.mts')
+copyFileSync('lib/index.d.mts', 'lib/index.d.ts')
+renameSync('lib/esm/index.d.ts.map', 'lib/index.d.ts.map')
 
 // CJS: rename .js -> .cjs, .d.ts -> .d.cts
-renameSync('lib/cjs/resolver.js', 'lib/resolver.cjs')
-renameSync('lib/cjs/resolver.js.map', 'lib/resolver.cjs.map')
-renameSync('lib/cjs/resolver.d.ts', 'lib/resolver.d.cts')
+renameSync('lib/cjs/index.js', 'lib/index.cjs')
+renameSync('lib/cjs/index.js.map', 'lib/index.cjs.map')
+renameSync('lib/cjs/index.d.ts', 'lib/index.d.cts')
 
 // clean up temp dirs
 rmSync('lib/esm', { recursive: true })

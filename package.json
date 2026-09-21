@@ -2,10 +2,10 @@
   "name": "did-resolver",
   "version": "5.0.1",
   "description": "Resolve DID documents",
-  "source": "src/resolver.ts",
-  "main": "./lib/resolver.cjs",
-  "module": "./lib/resolver.mjs",
-  "types": "./lib/resolver.d.ts",
+  "source": "src/index.ts",
+  "main": "./lib/index.cjs",
+  "module": "./lib/index.mjs",
+  "types": "./lib/index.d.ts",
   "type": "module",
   "files": [
     "lib",
@@ -14,12 +14,12 @@
   "exports": {
     ".": {
       "require": {
-        "types": "./lib/resolver.d.cts",
-        "default": "./lib/resolver.cjs"
+        "types": "./lib/index.d.cts",
+        "default": "./lib/index.cjs"
       },
       "import": {
-        "types": "./lib/resolver.d.mts",
-        "default": "./lib/resolver.mjs"
+        "types": "./lib/index.d.mts",
+        "default": "./lib/index.mjs"
       }
     }
   },
