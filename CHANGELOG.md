@@ -4,13 +4,13 @@
 
 ### Major Changes
 
-- d24aae9: feat: support per-method parsers #164
+- 607da04: feat: support per-method parsers #164
   BREAKING CHANGE: URL matrix params no longer supported. The embedded parser is now adhering more strictly to DID Core v1 spec.
 - 3fa9cd1: BREAKING CHANGE: main file got renamed to index.ts. This changes the exports map so it counts as a breaking change.
 
 ### Minor Changes
 
-- d24aae9: Export both runtime `const` mapping and `type VerificationRelationship` using the mixedCase names defined in https://www.w3.org/TR/did/#verification-relationships. Many thanks to [@rmlearney-digicatapult](https://github.com/rmlearney-digicatapult) for contributing the initial mapping and type definitions (See #165).
+- 19d9edd: Export both runtime `const` mapping and `type VerificationRelationship` using the mixedCase names defined in https://www.w3.org/TR/did/#verification-relationships. Many thanks to [@rmlearney-digicatapult](https://github.com/rmlearney-digicatapult) for contributing the initial mapping and type definitions (See #165).
 
 ### Bug Fixes
 
