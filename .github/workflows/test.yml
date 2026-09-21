@@ -21,6 +21,7 @@ jobs:
       - run: pnpm run lint
       - run: pnpm run format
       - run: pnpm run test:ci
+      - run: pnpm dlx knip
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1

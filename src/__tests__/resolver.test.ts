@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import { vi, describe, it, expect, beforeAll, Mock } from 'vitest'
-import { Resolver, parse, DIDResolver, DIDParser, ParsedDID, DIDResolutionResult } from '../resolver'
+import { Resolver, parse, DIDResolver, DIDParser, ParsedDID, DIDResolutionResult, DIDDocument } from '../resolver.js'
 
 describe('resolver', () => {
   describe('parse()', () => {
@@ -179,7 +179,7 @@ describe('resolver', () => {
 
   describe('resolve', () => {
     let resolver: Resolver
-    let mockmethod: Mock<Parameters<DIDResolver>, ReturnType<DIDResolver>>
+    let mockmethod: Mock<DIDResolver>
     const mockReturn = Promise.resolve({
       didResolutionMetadata: { contentType: 'application/did+json' },
       didDocument: {
@@ -663,7 +663,7 @@ describe('resolver', () => {
 
         const customResolver: DIDResolver = async (): Promise<DIDResolutionResult> => ({
           didResolutionMetadata: {},
-          didDocument: {},
+          didDocument: {} as DIDDocument,
           didDocumentMetadata: {},
         })
 

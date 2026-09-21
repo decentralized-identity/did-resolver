@@ -4,6 +4,9 @@ lib
 coverage
 .idea/
 .vscode/
+.pi/
+.scratch/
+**/.DS_Store
 
 *.log
 
