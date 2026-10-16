@@ -22,7 +22,7 @@ import { VerificationRelationship, type DIDDocument } from 'did-resolver'
 
 const document: DIDDocument = {
   id: 'did:example:123',
-  [VerificationRelationship.Authentication]: ['did:example:123#key-1'],
+  [VerificationRelationship.authentication]: ['did:example:123#key-1'],
 }
 ```
 
@@ -48,11 +48,10 @@ key/value pairs. Then you can flatten them into one object to pass into the `Res
 import { Resolver } from 'did-resolver'
 import ethr from 'ethr-did-resolver'
 import web from 'web-did-resolver'
-import sov from 'sov-did-resolver'
 
 //returns an object of { methodName: resolveFunction}
-ethrResolver = ethr.getResolver()
-webResolver = web.getResolver()
+const ethrResolver = ethr.getResolver()
+const webResolver = web.getResolver()
 
 //If you are using multiple methods you need to flatten them into one object
 const resolver = new Resolver({
@@ -60,8 +59,8 @@ const resolver = new Resolver({
   ...webResolver,
 })
 
-//If you are using one method you can simply pass the result of getResolver( into the constructor
-const resolver = new Resolver(ethrResolver)
+//Alternatively, for one method:
+const singleMethodResolver = new Resolver(ethrResolver)
 ```
 
 ### Using legacy DID Method resolvers
@@ -74,8 +73,8 @@ import web from 'web-did-resolver'
 import sov from 'sov-did-resolver'
 
 //returns an object of { methodName: resolveFunction}
-webResolver = web.getResolver()
-sovResolver = sov.getResolver()
+const webResolver = web.getResolver()
+const sovResolver = sov.getResolver()
 
 //If you are using multiple methods you need to flatten them into one object
 const resolver = new Resolver({}, {
@@ -85,19 +84,20 @@ const resolver = new Resolver({}, {
   }
 })
 
-//If you are using one method you can simply pass the result of getResolver( into the constructor
-const resolver = new Resolver(ethrResolver)
+//Alternatively, for one legacy method:
+const singleMethodResolver = new Resolver({}, { legacyResolvers: webResolver })
 ```
 
 ## Resolving a DID document
 
-The resolver presents a simple `resolve()` function that returns a ES6 Promise returning the DID document.
+The resolver presents a simple `resolve()` function that returns an ES6 Promise of a `DIDResolutionResult`, containing
+`didResolutionMetadata`, `didDocument` (which can be `null` on failure), and `didDocumentMetadata`.
 
 ```js
-resolver.resolve('did:ethr:0xF3beAC30C498D9E26865F34fCAa57dBB935b0D74/some/path#fragment=123').then(doc => console.log)
+resolver.resolve('did:ethr:0xF3beAC30C498D9E26865F34fCAa57dBB935b0D74/some/path#fragment=123').then(result => console.log(result.didDocument))
 
 // You can also use ES7 async/await syntax
-const doc = await resolver.resolve('did:ethr:0xF3beAC30C498D9E26865F34fCAa57dBB935b0D74/some/path#fragment=123')
+const { didDocument } = await resolver.resolve('did:ethr:0xF3beAC30C498D9E26865F34fCAa57dBB935b0D74/some/path#fragment=123')
 ```
 
 ## Caching
@@ -134,21 +134,21 @@ const resolver = new Resolver({
 
 ### Per-call cache control
 
-You can override the global cache setting on a per-call basis using the `cache` option in `DIDResolutionOptions`:
+When the built-in cache is enabled, you can bypass it for a call using `cache: false` in `DIDResolutionOptions`:
 
 ```js
-// Global cache enabled, but disable for this specific resolution
-const doc = await resolver.resolve('did:ethr:0xabcd...', { cache: false })
-
-// Global cache disabled, but enable for this specific resolution
-const doc = await resolver.resolve('did:ethr:0xabcd...', { cache: true })
+const result = await resolver.resolve('did:example:123', { cache: false })
 ```
+
+Passing `cache: true` per call does not enable a cache disabled at construction. Custom caches decide how to handle these options.
 
 ### Custom cache implementation
 
-For advanced use cases, implement a custom `DIDCache` function. It receives the parsed DID, a resolve function, and optional resolution options:
+For advanced use cases, implement a custom `DIDCache` function. It receives the parsed DID, a resolve function, and optional resolution options. The following assumes a TTL cache named `cache` with `get(key)` and `set(key, value, ttlMilliseconds)` methods:
 
-```js
+```ts
+import type { DIDCache } from 'did-resolver'
+
 const customCache: DIDCache = async (parsed, resolve, options) => {
   // Respect per-call cache control
   if (options?.cache === false) return await resolve()
@@ -175,46 +175,46 @@ Each DID method will have its own methods for looking up an identifier on its re
 decentralized storage mechanism.
 
 To avoid misconfiguration, method implementers should export a `getResolver()` function which returns an object mapping
-the method name to a `resolve(did: string, parsed: ParsedDID, didResolver: DIDResolver, options: DIDResolutionOptions)`
+the method name to a `resolve(did: string, parsed: ParsedDID, didResolver: Resolvable, options: DIDResolutionOptions)`
 function. e.g. `{ ethr: resolve }`.
 
 The resolve function should accept a did string, and an object of
-type [ParsedDID](https://github.com/decentralized-identity/did-resolver/blob/master/src/resolver.ts#L112)
+type [ParsedDID](https://github.com/decentralized-identity/did-resolver/blob/master/src/index.ts).
+The minimal example below returns a synthetic document; replace its creation with your method's lookup.
 
-```js
+```ts
+import type { DIDResolutionOptions, DIDResolutionResult, ParsedDID, Resolvable } from 'did-resolver'
+
 export function getResolver() {
   async function resolve(
     did: string,
     parsed: ParsedDID,
-    didResolver: Resolver,
+    didResolver: Resolvable,
     options: DIDResolutionOptions
-  ): Promise<DIDDocument> {
-    console.log(parsed)
-    // {method: 'mymethod', id: 'abcdefg', did: 'did:mymethod:abcdefg/some/path#fragment=123', path: '/some/path', fragment: 'fragment=123'}
-    const didDoc = ...// lookup doc
-    // If you need to lookup another did as part of resolving this did document, the primary DIDResolver object is passed in as well
-    const parentDID = await didResolver.resolve(...)
-    // Return the DIDResolutionResult object
+  ): Promise<DIDResolutionResult> {
+    // For did:mymethod:abcdefg/some/path#fragment=123, parsed.did is
+    // 'did:mymethod:abcdefg' and parsed.didUrl contains the entire input URL.
+    // To resolve another DID during lookup, use didResolver.resolve(otherDid).
     return {
       didResolutionMetadata: { contentType: 'application/did+ld+json' },
-      didDocument: didDoc
-      didDocumentMetadata: { ... }
+      didDocument: { '@context': 'https://www.w3.org/ns/did/v1', id: did },
+      didDocumentMetadata: {},
     }
   }
 
-  return { myMethod: resolve }
+  return { mymethod: resolve }
 }
 ```
 
-The MyMethod `getResolver()` result could then be passed into the DIDResolver constructor. Note that it should be
+The MyMethod `getResolver()` result could then be passed into the `Resolver` constructor. Note that it should be
 flattened if used with other methods as well.
 
 ```js
-import { DIDResolver } from 'did-resolver'
-import MyMethod from 'mymethod-did-resolver'
+import { Resolver } from 'did-resolver'
+import * as MyMethod from 'mymethod-did-resolver'
 
 const myResolver = MyMethod.getResolver()
-const resolver = new DIDResolver(myResolver)
+const resolver = new Resolver(myResolver)
 ```
 
 ### Per-Method Parsing
@@ -223,30 +223,25 @@ If your method has special syntax constraints beyond the base DID Core v1.0 spec
 
 **Architecture:** Method-specific parsers receive a DID Core v1.0 compliant `ParsedDID` result from the global parser and only check method-specific syntax constraints. This ensures all DIDs pass DID Core v1.0 parsing first, then method-specific syntax rules. The parser is part of the resolver enhancement — both are exported together from `getResolver()`.
 
-```js
+```ts
+import type { DIDResolutionOptions, DIDResolutionResult, ParsedDID, Resolvable } from 'did-resolver'
+
 export function getResolver() {
   async function resolve(
     did: string,
     parsed: ParsedDID,
-    didResolver: Resolver,
+    didResolver: Resolvable,
     options: DIDResolutionOptions
-  ): Promise<DIDDocument> {
-    console.log(parsed)
-    // {method: 'mymethod', id: 'abcdefg', did: 'did:mymethod:abcdefg/some/path#fragment=123', path: '/some/path', fragment: 'fragment=123'}
-    
-    const didDoc = ... // lookup doc
-    // If you need to lookup another did as part of resolving this did document, the primary DIDResolver object is passed in as well
-    const parentDID = await didResolver.resolve(...)
-    
-    // Return the DIDResolutionResult object
+  ): Promise<DIDResolutionResult> {
+    // Replace this synthetic document with your method's lookup.
     return {
       didResolutionMetadata: { contentType: 'application/did+ld+json' },
-      didDocument: didDoc,
-      didDocumentMetadata: { ... }
+      didDocument: { '@context': 'https://www.w3.org/ns/did/v1', id: did },
+      didDocumentMetadata: {},
     }
   }
 
-  function parser(parsed: ParsedDID): ParsedDID | null {
+  function parser(parsed: ParsedDID): (ParsedDID & { methodSpecificField: string }) | null {
     // Receive DID Core v1.0 compliant ParsedDID from global parser
     // Only add method-specific syntax constraints
     
@@ -265,7 +260,7 @@ export function getResolver() {
   // Attach parser to resolver — this is required for the parser to be used
   resolve.parser = parser
 
-  return { myMethod: resolve }
+  return { mymethod: resolve }
 }
 ```
 
@@ -273,14 +268,14 @@ Consumers register the resolver normally — the parser is part of it:
 
 ```js
 import { Resolver } from 'did-resolver'
-import MyMethod from 'mymethod-did-resolver'
+import * as MyMethod from 'mymethod-did-resolver'
 
 // For a single method
 const resolver = new Resolver(MyMethod.getResolver())
 
-// For multiple methods, flatten them together
-import OtherMethod from 'other-did-resolver'
-const resolver = new Resolver({
+// Alternatively, for multiple methods, flatten them together
+import * as OtherMethod from 'other-did-resolver'
+const multiMethodResolver = new Resolver({
   ...MyMethod.getResolver(),
   ...OtherMethod.getResolver(),
 })
